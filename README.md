@@ -8,7 +8,7 @@
 |---|---|
 | Live app | `TODO: https://<deployment>.vercel.app` |
 | Demo video | `TODO: <video URL>` |
-| Pitch deck | [docs/nata-pitch-deck.pptx](docs/nata-pitch-deck.pptx) |
+| Pitch deck | [docs/nata-pitch-deck-hackmeridian.pptx](docs/nata-pitch-deck-hackmeridian.pptx) |
 | Architecture | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | Campaigns contract (testnet) | [`CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV`](https://stellar.expert/explorer/testnet/contract/CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV) |
 
