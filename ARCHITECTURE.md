@@ -88,3 +88,7 @@ The backend can submit tickets but cannot redirect funds: the reward can only be
 ## Roadmap
 
 Spending the cashback at other merchants (QR charge + passkey payment), multi-stop route bonuses, anchor cash-out, proof-of-humanity for sybil resistance, mainnet and audit.
+
+## Agent access (MCP)
+
+`packages/mcp` exposes the same contract client as the web app through an MCP server, so AI agents can create, inspect and close campaigns from an agent-owned testnet merchant account, with per-call and per-session budget caps and a dry-run mode. See the README section "MCP server for agents" and `skills/nata`.
