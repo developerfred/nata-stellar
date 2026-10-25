@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/scan", key: "nav.scan" },
   { href: "/merchant", key: "nav.merchant" },
   { href: "/faucet", key: "nav.faucet" },
+  { href: "/docs", key: "nav.docs" },
 ] as const;
 
 const LINK_CLASS =

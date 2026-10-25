@@ -1,6 +1,6 @@
 # nata
 
-**Pay-per-visit campaigns on Stellar.** Any place (restaurant, café, shop, event booth, museum) locks a USDC budget in a Soroban contract that **pays only when a real visit is proven at the counter**. Visitors get instant cashback in a passkey wallet: no seed phrase, no gas.
+**Pay-per-visit campaigns on Stellar.** Any place (restaurant, café, shop, event booth, museum) locks a stablecoin budget in a Soroban contract that **pays only when a real visit is proven at the counter**. Visitors get instant cashback in a wallet with no seed phrase and no gas. On testnet the token is the team-issued `vUSD` (a Stellar Asset Contract); Circle USDC is the intended swap-in. Passkey wallets are implemented but not deployed yet, so today visitors use a device wallet (see Known limitations).
 
 > Built during HackMeridian (Lisbon, Oct 25–26, 2026). Track: **Genesis** + **Stellar Composed**. Network: **Stellar Testnet**.
 
@@ -8,6 +8,7 @@
 |---|---|
 | Live app | `TODO: https://<deployment>.vercel.app` |
 | Demo video | `TODO: <video URL>` |
+| Docs | [docs/README.md](docs/README.md), the in-app `/docs` page (EN/PT/ES), `/llms.txt` |
 | Pitch deck | [docs/nata-pitch-deck-hackmeridian.pptx](docs/nata-pitch-deck-hackmeridian.pptx) |
 | Architecture | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | Campaigns contract (testnet) | [`CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV`](https://stellar.expert/explorer/testnet/contract/CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV) |
@@ -37,7 +38,7 @@ contracts/campaigns   Soroban escrow + proof-of-visit contract (Rust)
 apps/web              Visitor PWA + merchant dashboard (Next.js)
 packages/mcp          MCP server so AI agents can create and manage campaigns
 skills/nata           Claude skill that teaches an agent to use that MCP server
-docs/                 Build plan, pitch deck, submission notes; x402 demo in docs/X402.md
+docs/                 Project documentation (index: docs/README.md), build plan, pitch deck, submission notes; x402 demo in docs/X402.md
 ARCHITECTURE.md       How Stellar is used: assets, contract IDs, wallet, relayer, RPC
 ```
 
@@ -80,11 +81,23 @@ pnpm dev                       # http://localhost:3000
 | `NEXT_PUBLIC_EXPLORER_URL` | client | Explorer base URL for transaction links | `https://stellar.expert/explorer/testnet` |
 | `NEXT_PUBLIC_TOKEN_CONTRACT_ID` | client | Token (SAC) used for budgets and rewards | none, required |
 | `NEXT_PUBLIC_TOKEN_SYMBOL` | client | Token symbol shown in the UI | `USDC` |
-| `RELAYER_URL` | server | Fee-sponsoring relayer base URL, for example `https://channels.openzeppelin.com/testnet` | none (optional) |
+| `NEXT_PUBLIC_TOKEN_ISSUER` | client | Issuer (`G…`) of the classic asset behind the token, used for the sponsored trustline of device wallets | none |
+| `NEXT_PUBLIC_FRIENDBOT_URL` | client | Friendbot used to open device wallets and merchant accounts on testnet | `https://friendbot.stellar.org` |
+| `NEXT_PUBLIC_WALLET_WASM_HASH` | client | Passkey smart wallet WASM hash; empty means device wallets | none |
+| `RELAYER_URL` | server | Fee-sponsoring relayer base URL | none (optional) |
 | `RELAYER_API_KEY` | server | Relayer API key. Never exposed to the browser | none (optional) |
-| `SPONSOR_SECRET` | server | Funded testnet account (`S…`) that pays fees when no relayer is configured | none |
+| `SPONSOR_SECRET` | server | Sponsor account (`S…`): pays fees when no relayer is configured and signs fee bumps for trustlines | none |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | server | Shared rate-limit store (Vercel KV works too). Without it limits are per serverless instance | none |
 
 > Set either the relayer pair or `SPONSOR_SECRET`. Never commit `.env.local`.
+
+## vUSD faucet
+
+`/faucet` (and `POST /api/faucet` with `{"address":"G…"}`) mints 100 test vUSD from the issuer key in the server-only `FAUCET_SECRET`. It is vUSD-specific: it only runs when `FAUCET_SECRET` is the secret of `NEXT_PUBLIC_TOKEN_ISSUER`, limits 3 per address and 10 per IP per UTC day (20000 vUSD per day in total), and on Vercel it refuses to run without the Upstash / Vercel KV store. A `G…` address needs the vUSD trustline first. `FAUCET_SECRET` can mint without limit: use a dedicated testnet issuer.
+
+## x402 paid endpoint
+
+`GET /api/x402/campaigns-premium` is an [x402](https://developers.stellar.org/docs/build/agentic-payments/x402) paywall on Stellar: `402` with the price, then the data after a signed vUSD payment (default 0.01). It stays off (503) until `X402_PAY_TO` is set. The end-to-end paid round trip with a live facilitator is not confirmed yet; see [docs/X402.md](docs/X402.md).
 
 ## MCP server for agents
 
@@ -110,7 +123,7 @@ The skill in [`skills/nata`](skills/nata/SKILL.md) tells an agent when and how t
 ### Fastest path for judges (about 1 minute)
 
 1. Open the live app on your phone: `TODO: live URL`.
-2. Tap **Create wallet** and confirm with Face ID / Touch ID.
+2. Tap **Create wallet** (a device wallet today; passkey wallets need the factory that is not deployed yet), then get test vUSD from `/faucet`.
 3. Scan the campaign QR below (or on the pitch deck) with the in-app scanner.
 4. You receive the reward in a few seconds. Tap the link to see the transaction on stellar.expert.
 
@@ -120,7 +133,7 @@ The skill in [`skills/nata`](skills/nata/SKILL.md) tells an agent when and how t
 
 1. **Merchant:** open `/merchant`, register a place, create a campaign (reward, budget, window), and open **Counter mode** to show the rotating QR.
 2. **Visitor:** scan the QR and claim. Balance and history update.
-3. **Security checks:** replay an old QR, or claim twice with the same wallet. The contract rejects both (see the refused-claim link below).
+3. **Security checks:** replay an old QR, or claim twice with the same wallet. The contract rejects both (there is no transaction to link: see the refused-claim row below).
 4. **Merchant:** check the dashboard for visits, cost per visit and remaining budget, then close the campaign to recover unspent funds.
 
 ### Testnet transaction evidence
@@ -129,7 +142,7 @@ The skill in [`skills/nata`](skills/nata/SKILL.md) tells an agent when and how t
 |---|---|
 | `create_campaign` | [a8746e3a…2fec](https://stellar.expert/explorer/testnet/tx/a8746e3a8524e9a92dc0ab21d0ce11f04d4c5ff48ea7b85a366817fc95322fec) |
 | `claim` (accepted, 2 vUSD) | [82f51bda…b46e](https://stellar.expert/explorer/testnet/tx/82f51bda8bd34273881e0eb55c1b0c9316e0232bd8f963a44d76e472e327b46e) |
-| `claim` (refused: reused QR, second visit) | No transaction. The server simulates first and returns `This QR code was already used` / `You already collected this reward.` before any fee is spent |
+| `claim` (refused: reused QR, second visit) | No transaction exists, by design. `/api/claim` simulates the call first (`prepareTransaction` in `apps/web/app/api/claim/route.ts`), so the contract's `NonceUsed` / `AlreadyClaimed` errors surface as `This QR code was already used` / `You already collected this reward.` before anything is submitted or any fee is spent. Evidence: the `reused QR rejected`, `second visit rejected` and `forged ticket rejected` PASS lines printed by `scripts/e2e-testnet.sh`, and the contract tests in `contracts/campaigns/src/test.rs` |
 | `close_campaign` (refund, from the e2e script run) | [d658aeb3…a592](https://stellar.expert/explorer/testnet/tx/d658aeb3a14b5971b0574cd33860d3b562cf4aaf028ea06e9f48dd97a12fa592) |
 
 Deployed on Stellar Testnet: token (SAC of `vUSD`) `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD`, issuer `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26`, demo campaign id `0` (2 vUSD per visit, 100 vUSD budget, 50 claims max). Contract [deploy tx](https://stellar.expert/explorer/testnet/tx/d6032e522576e42e8c2fdb20a6f35771d9bcb15230f277925b6ff85715404bb3).
@@ -172,6 +185,16 @@ Mainnet, bank cash-out via an anchor, GPS geofencing, strong anti-sybil proofs, 
 
 None. Everything in this repository was built during HackMeridian; see the dated commit history.
 
+## Known limitations
+
+- Passkey smart wallets: factory and WebAuthn verifier not deployed, `NEXT_PUBLIC_WALLET_WASM_HASH` is a TODO. Visitors use a device wallet kept in `localStorage`.
+- One token per deployment in the UI (the contract accepts a token per campaign). The faucet and trustline sponsorship are vUSD-specific.
+- x402: the paid round trip is not confirmed on chain yet. The relayer path is unit-tested only.
+- `FAUCET_SECRET` is the vUSD issuer key: dedicated testnet key, never reused.
+- Testnet only, no external audit.
+
+Open placeholders (live URL, video URL, demo QR) are tracked in [docs/SUBMISSION.md](docs/SUBMISSION.md).
+
 ## License
 
-[Apache-2.0](LICENSE)
+[Apache-2.0](LICENSE). Copyright 2026 codingsh, see [NOTICE](NOTICE).

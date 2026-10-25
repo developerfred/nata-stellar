@@ -34,7 +34,7 @@ Status of every item in `docs/PLANO.md`, checked against this repository.
 ## Serverless hardening
 
 - `/api/claim` returns a pending hash after 20 s and the client polls `/api/claim/status`, so Vercel limits are not hit.
-- Still open: vUSD trustline and i18n/onboarding (other threads), keys in `localStorage` (testnet only).
+- Done since: vUSD trustline (`/api/trustline`, sponsored), i18n (EN/PT/ES) and the `/faucet` page. Still open: keys in `localStorage` (testnet only).
 
 ## Submission checklist
 

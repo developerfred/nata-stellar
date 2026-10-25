@@ -11,7 +11,9 @@ Deadline: Mon Oct 26, 12:00 (Lisbon).
 - [x] Refused claims: reused QR, second visit and forged signature are checked by `scripts/e2e-testnet.sh` (rejected at simulation, so no transaction exists)
 - [x] Prior work: none, everything built during the event (see commit dates)
 - [x] Pitch deck: `docs/nata-pitch-deck-hackmeridian.pptx`
-- [x] Vercel readiness notes: `docs/VERCEL.md`
+- [x] Vercel deploy notes with the exact env vars: `docs/VERCEL.md`
+- [x] Documentation: `docs/`, in-app `/docs` (EN/PT/ES), `/llms.txt`, `/llms-full.txt`, `/docs/agents.md`, `/.well-known/mcp.json`
+- [x] x402 paid endpoint and vUSD faucet implemented and documented (`docs/X402.md`)
 
 ## Blockers that need the founder
 
@@ -26,4 +28,14 @@ Deadline: Mon Oct 26, 12:00 (Lisbon).
 
 - The repository stays private for now. HackMeridian requires a public repository, so it must be made public before submitting.
 
-Remaining placeholders: `grep -rn TODO README.md ARCHITECTURE.md docs/`
+## Open placeholders (single list)
+
+| Placeholder | Where it appears |
+|---|---|
+| Live app URL | README header table and demo instructions; add `NEXT_PUBLIC_SITE_URL` on Vercel |
+| Demo video URL | README header table |
+| Demo campaign QR image (`docs/demo-qr.png`) | README demo instructions |
+| Passkey wallet WASM hash / factory | `NEXT_PUBLIC_WALLET_WASM_HASH`, empty on purpose until deployed |
+| x402 paid round trip with a live facilitator | `docs/X402.md`, "Not verified" |
+
+Find them with `grep -rn TODO README.md ARCHITECTURE.md docs/`.
