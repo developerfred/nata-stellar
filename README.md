@@ -78,11 +78,11 @@ pnpm dev                       # http://localhost:3000
 | `NEXT_PUBLIC_EXPLORER_URL` | client | Explorer base URL for transaction links | `https://stellar.expert/explorer/testnet` |
 | `NEXT_PUBLIC_TOKEN_CONTRACT_ID` | client | Token (SAC) used for budgets and rewards | none, required |
 | `NEXT_PUBLIC_TOKEN_SYMBOL` | client | Token symbol shown in the UI | `USDC` |
-| `RELAYER_URL` | server | Fee-sponsoring relayer base URL | `TODO` |
-| `RELAYER_API_KEY` | server | Relayer API key. Never exposed to the browser | `TODO` |
-| `SPONSOR_SECRET` | server | Fallback sponsor account (`S…`) if the relayer is unavailable | `TODO` |
+| `RELAYER_URL` | server | Fee-sponsoring relayer base URL, for example `https://channels.openzeppelin.com/testnet` | none (optional) |
+| `RELAYER_API_KEY` | server | Relayer API key. Never exposed to the browser | none (optional) |
+| `SPONSOR_SECRET` | server | Funded testnet account (`S…`) that pays fees when no relayer is configured | none |
 
-> The last four rows depend on the wallet/relayer integration; update them as that work lands. Never commit `.env.local`.
+> Set either the relayer pair or `SPONSOR_SECRET`. Never commit `.env.local`.
 
 ## Demo instructions
 
@@ -109,9 +109,9 @@ pnpm dev                       # http://localhost:3000
 | `create_campaign` | [a8746e3a…2fec](https://stellar.expert/explorer/testnet/tx/a8746e3a8524e9a92dc0ab21d0ce11f04d4c5ff48ea7b85a366817fc95322fec) |
 | `claim` (accepted, 2 vUSD) | [82f51bda…b46e](https://stellar.expert/explorer/testnet/tx/82f51bda8bd34273881e0eb55c1b0c9316e0232bd8f963a44d76e472e327b46e) |
 | `claim` (refused: reused QR, second visit) | No transaction. The server simulates first and returns `This QR code was already used` / `You already collected this reward.` before any fee is spent |
+| `close_campaign` (refund, from the e2e script run) | [d658aeb3…a592](https://stellar.expert/explorer/testnet/tx/d658aeb3a14b5971b0574cd33860d3b562cf4aaf028ea06e9f48dd97a12fa592) |
 
-Deployed on Stellar Testnet: token (SAC of `vUSD`) `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD`, issuer `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26`, demo campaign id `0` (2 vUSD per visit, 100 vUSD budget, 50 claims max).
-| `close_campaign` | `TODO: <explorer link>` |
+Deployed on Stellar Testnet: token (SAC of `vUSD`) `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD`, issuer `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26`, demo campaign id `0` (2 vUSD per visit, 100 vUSD budget, 50 claims max). Contract [deploy tx](https://stellar.expert/explorer/testnet/tx/d6032e522576e42e8c2fdb20a6f35771d9bcb15230f277925b6ff85715404bb3).
 
 ## Automated end-to-end check (testnet)
 
@@ -153,4 +153,4 @@ None. Everything in this repository was built during HackMeridian; see the dated
 
 ## License
 
-`TODO: choose a license`
+[MIT](LICENSE)

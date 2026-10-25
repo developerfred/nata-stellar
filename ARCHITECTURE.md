@@ -17,12 +17,12 @@ nata is a pay-per-visit campaign network on **Stellar Testnet**. Funds and rules
 
 | Resource | Identifier | Notes |
 |---|---|---|
-| `campaigns` contract | `TODO: C…` | Escrow + proof-of-visit. Explorer: `TODO` |
-| Reward token (SAC) | `TODO: C…` | Circle testnet USDC, or fallback `vUSD` issued by the team |
-| `vUSD` issuer (if used) | `TODO: G…` | Only if the Circle faucet is unavailable |
-| Fee sponsor / relayer | `TODO` | OpenZeppelin Relayer Channels, or a sponsor account `G…` as fallback |
-| Smart wallet factory / WebAuthn verifier | `TODO` | From `passkey-kit` deployment |
-| Demo merchant wallet | `TODO: C… or G…` | Funds the demo campaign |
+| `campaigns` contract | `CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV` | Escrow + proof-of-visit. [Explorer](https://stellar.expert/explorer/testnet/contract/CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV), [deploy tx](https://stellar.expert/explorer/testnet/tx/d6032e522576e42e8c2fdb20a6f35771d9bcb15230f277925b6ff85715404bb3) |
+| Reward token (SAC) | `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD` | SAC of the team-issued `vUSD` asset (Circle testnet USDC is the intended swap-in) |
+| `vUSD` issuer | `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26` | Classic issuer account of `vUSD` |
+| Fee sponsor | `GDPKJVLYS6P6FKXCJZ7RS6RXQJL3DCAQWMFGB4HWQVXZWMJMYZSOPI5I` | Server-side `SPONSOR_SECRET` account that pays fees today. OpenZeppelin Relayer Channels (`https://channels.openzeppelin.com/testnet`) is supported through `RELAYER_URL` and `RELAYER_API_KEY` |
+| Smart wallet factory / WebAuthn verifier | Not deployed | Passkey wallets need `NEXT_PUBLIC_WALLET_WASM_HASH` and a relayer. Without them visitors use a browser-held key |
+| Demo merchant wallet | `GCTWNUAFWMJSJSVOUACVBWVCDBDPATIF5UDQKPBCBHMBGVPJFJ24F4DY` | Funds demo campaign `0` (2 vUSD per visit, 100 vUSD budget) |
 | RPC | `https://soroban-testnet.stellar.org` | Network passphrase `Test SDF Network ; September 2015` |
 | Explorer | `https://stellar.expert/explorer/testnet` | |
 
