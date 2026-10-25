@@ -1,14 +1,35 @@
 @import "tailwindcss";
 
+/* nata design tokens. Paper and ink for calm (ma), cobalt azulejo for identity, custard for the one action. */
 :root {
-  --background: #fbf5e9;
-  --foreground: #2b1d12;
-  --card: #ffffff;
-  --muted: #7a6a58;
-  --line: #eadfcb;
+  --background: #f6f2e9; /* washi */
+  --foreground: #1b2233; /* sumi ink */
+  --card: #fdfbf6;
+  --muted: #5d6475;
+  --line: #e2dccd;
+  --azul: #1d4ba0;
+  --azul-soft: #dfe8f7;
   --custard: #f2b33d;
-  --burnt: #b6491c;
-  --ok: #1f7a4d;
+  --on-custard: #1b2233;
+  --burnt: #b23f17;
+  --ok: #1b7a4b;
+  --radius: 0.875rem;
+  --space-ma: clamp(1.5rem, 5vw, 2.5rem);
+  --font-display: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0d1424; /* ai-iro, indigo night */
+    --foreground: #eef0f6;
+    --card: #141d33;
+    --muted: #a3acc2;
+    --line: #243050;
+    --azul: #8fb0ee;
+    --azul-soft: #1b2b4f;
+    --burnt: #ff9068;
+    --ok: #62d49b;
+  }
 }
 
 @theme inline {
@@ -17,27 +38,40 @@
   --color-card: var(--card);
   --color-muted: var(--muted);
   --color-line: var(--line);
+  --color-azul: var(--azul);
+  --color-azul-soft: var(--azul-soft);
   --color-custard: var(--custard);
   --color-burnt: var(--burnt);
   --color-ok: var(--ok);
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-display);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #1a120b;
-    --foreground: #f6ecd9;
-    --card: #271b11;
-    --muted: #b3a28b;
-    --line: #3b2b1c;
-  }
-}
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  line-height: 1.55;
   -webkit-tap-highlight-color: transparent;
+}
+
+h1, h2, h3 { text-wrap: balance; }
+p { text-wrap: pretty; }
+
+:focus-visible { outline: 2px solid var(--azul); outline-offset: 2px; border-radius: 0.5rem; }
+
+.display { font-family: var(--font-display); font-weight: 600; letter-spacing: -0.01em; }
+
+/* A strip of repeated azulejo, used sparingly as a threshold between regions. */
+.azulejo-band {
+  height: 0.75rem;
+  background: url("/azulejo.svg") 0 0 / 0.75rem 0.75rem repeat-x;
+  opacity: 0.9;
+}
+@media (prefers-color-scheme: dark) {
+  .azulejo-band { opacity: 0.55; }
 }
 
 .btn {
@@ -46,24 +80,55 @@ body {
   justify-content: center;
   gap: 0.5rem;
   min-height: 3rem;
-  padding: 0 1.25rem;
+  padding: 0 1.4rem;
   border-radius: 9999px;
   font-weight: 600;
   background: var(--custard);
-  color: #2b1d12;
-  transition: transform 0.1s, opacity 0.2s;
+  color: var(--on-custard);
+  box-shadow: inset 0 0 0 1px rgb(27 34 51 / 0.12);
+  transition: transform 0.15s ease-out, opacity 0.15s ease-out;
 }
-.btn:active { transform: scale(0.98); }
-.btn:disabled { opacity: 0.5; }
-.btn-ghost { background: transparent; border: 1px solid var(--line); color: var(--foreground); }
-.card { background: var(--card); border: 1px solid var(--line); border-radius: 1.25rem; padding: 1.25rem; }
+.btn:hover:not(:disabled) { opacity: 0.92; }
+.btn:active:not(:disabled) { transform: scale(0.98); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-ghost { background: transparent; box-shadow: inset 0 0 0 1px var(--line); color: var(--foreground); }
+.btn-ghost:hover:not(:disabled) { background: var(--azul-soft); opacity: 1; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+/* Cards that link somewhere pick up a cobalt hairline, like a tile edge catching light. */
+a.card { transition: border-color 0.15s ease-out, transform 0.15s ease-out; }
+a.card:hover { border-color: var(--azul); }
+a.card:active { transform: scale(0.995); }
+
 .input {
   width: 100%;
   min-height: 3rem;
   padding: 0.5rem 0.9rem;
-  border-radius: 0.9rem;
+  border-radius: 0.75rem;
   border: 1px solid var(--line);
   background: var(--card);
   color: var(--foreground);
+  font-size: 1rem; /* 16px stops iOS zooming on focus */
 }
+.input:focus-visible { border-color: var(--azul); outline-offset: 0; }
 .label { font-size: 0.8rem; font-weight: 600; color: var(--muted); display: block; margin-bottom: 0.25rem; }
+.eyebrow { font-size: 0.75rem; font-weight: 600; text-transform: uppercase; color: var(--azul); }
+
+.skeleton { background: var(--line); border-radius: var(--radius); animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.5; } }
+
+.spinner { width: 1.5rem; height: 1.5rem; border-radius: 9999px; border: 2px solid var(--line); border-top-color: var(--azul); animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.rise { animation: rise 0.35s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}

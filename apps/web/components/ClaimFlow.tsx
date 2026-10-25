@@ -91,7 +91,7 @@ export function ClaimFlow() {
   if (ticketError) {
     return (
       <div className="card">
-        <p role="alert">{t("claim.invalid")}</p>
+        <p role="alert" className="display text-xl">{t("claim.invalid")}</p>
         <Link href="/scan" className="btn mt-4">{t("claim.scanAgain")}</Link>
       </div>
     );
@@ -100,26 +100,31 @@ export function ClaimFlow() {
   return (
     <div className="grid gap-5">
       {state.kind === "done" ? (
-        <section className="card text-center">
-          <p className="text-5xl font-extrabold text-ok">+{state.reward ?? ""} {config.tokenSymbol}</p>
+        <section className="card rise grid justify-items-center gap-1 overflow-hidden !p-0 text-center" role="status">
+          <div className="azulejo-band w-full" aria-hidden />
+          <div className="grid justify-items-center gap-1 p-6">
+          <span aria-hidden className="mb-2 grid size-14 place-items-center rounded-full bg-ok text-3xl text-background">✓</span>
+          <p className="display text-5xl tabular-nums text-ok">+{state.reward ?? ""} {config.tokenSymbol}</p>
           <p className="mt-2 font-semibold">{t("claim.confirmed")}</p>
-          <a className="mt-3 inline-block text-sm underline" href={state.explorer} target="_blank" rel="noreferrer">
+          <a className="mt-3 inline-flex min-h-11 items-center text-sm text-azul underline" href={state.explorer} target="_blank" rel="noreferrer">
             {t("claim.viewTx")}
           </a>
+          </div>
         </section>
       ) : state.kind === "sending" ? (
-        <section className="card text-center">
-          <p className="text-lg font-bold">{t("claim.sending")}</p>
+        <section className="card grid justify-items-center gap-2 text-center" role="status" aria-live="polite">
+          <div className="spinner" aria-hidden />
+          <p className="display text-xl">{t("claim.sending")}</p>
           <p className="mt-1 text-sm text-muted">{t("claim.seconds")}</p>
         </section>
       ) : state.kind === "error" ? (
         <section className="card">
-          <p role="alert" className="font-semibold text-burnt">{state.message}</p>
+          <p role="alert" className="display text-xl text-burnt">{state.message}</p>
           <Link href="/scan" className="btn mt-4">{t("claim.scanAgain")}</Link>
         </section>
       ) : !w.wallet && w.ready ? (
         <section className="card">
-          <p className="font-semibold">{t("claim.createFirst")}</p>
+          <p className="display text-xl">{t("claim.createFirst")}</p>
           <p className="mt-1 text-sm text-muted">{t("claim.hurry")}</p>
         </section>
       ) : null}

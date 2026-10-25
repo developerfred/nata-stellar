@@ -8,12 +8,12 @@ import { useWallet } from "./useWallet";
 export function WalletCard({ compact = false }: { compact?: boolean }) {
   const w = useWallet();
   const t = useT();
-  if (!w.ready) return <div className="card h-28 animate-pulse" aria-busy />;
+  if (!w.ready) return <div className="skeleton h-28" aria-busy />;
 
   if (!w.wallet) {
     return (
       <section className="card">
-        <h2 className="text-lg font-bold">{t("wallet.title")}</h2>
+        <h2 className="display text-xl">{t("wallet.title")}</h2>
         <p className="mt-1 text-sm text-muted">
           {w.passkeys ? t("wallet.passkeyHint") : t("wallet.localHint")}
         </p>
@@ -37,12 +37,12 @@ export function WalletCard({ compact = false }: { compact?: boolean }) {
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="label">{t("wallet.balance")}</p>
-          <p className="text-3xl font-extrabold tracking-tight">
+          <p className="display text-4xl tabular-nums">
             {w.balance === null ? "…" : formatAmount(w.balance)}{" "}
             <span className="text-base font-semibold text-muted">{config.tokenSymbol}</span>
           </p>
         </div>
-        <button className="btn btn-ghost !min-h-9 text-sm" onClick={() => w.refresh()}>
+        <button className="btn btn-ghost !min-h-11 text-sm" onClick={() => w.refresh()}>
           {t("wallet.refresh")}
         </button>
       </div>
