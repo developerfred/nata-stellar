@@ -2,15 +2,16 @@ import { NextResponse } from "next/server";
 import { PasskeyServer } from "passkey-kit/server";
 import { config } from "@/lib/config";
 import { allow } from "@/lib/server/ratelimit";
-import { relayerConfigured } from "@/lib/server/submit";
+import { relayerSettings } from "@/lib/server/submit";
 
 /** Submits a passkey wallet deployment through the relayer so visitors never need XLM. */
 export async function POST(req: Request) {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  if (!allow(`wallet-create:${ip}`, 5, 60 * 60_000)) {
+  if (!(await allow(`wallet-create:${ip}`, 5, 60 * 60_000))) {
     return NextResponse.json({ error: "Too many wallets created from this network" }, { status: 429 });
   }
-  if (!relayerConfigured()) {
+  const relayer = relayerSettings();
+  if (!relayer) {
     return NextResponse.json({ error: "Passkey wallets are not enabled on this server" }, { status: 503 });
   }
   const { xdr } = (await req.json().catch(() => ({}))) as { xdr?: string };
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
   const server = new PasskeyServer({
     networkPassphrase: config.networkPassphrase,
     rpcUrl: config.rpcUrl,
-    relayer: { baseUrl: process.env.RELAYER_URL!, apiKey: process.env.RELAYER_API_KEY! },
+    relayer: { baseUrl: relayer.baseUrl, apiKey: relayer.apiKey },
   });
   const res = await server.send(xdr);
   if (!res.success) return NextResponse.json({ error: res.error.message }, { status: 422 });

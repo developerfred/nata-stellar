@@ -23,13 +23,18 @@ Status of every item in `docs/PLANO.md`, checked against this repository.
 | `create_campaign`, `claim`, `close_campaign`, `get_campaign`, `list_active` | Done, deployed to testnet |
 | Visitor app: scan, claim, balance, places | Done (`apps/web`) |
 | Merchant panel, counter mode with 20 s rotating QR | Done (`/merchant`, `CounterQr`) |
-| Thin backend: sponsor/relayer submit, rate limit by IP and wallet | Done. Rate limit is in memory (see `VERCEL.md`) |
+| Thin backend: sponsor/relayer submit, rate limit by IP and wallet | Done. Rate limit is shared via Upstash / Vercel KV when configured, in-memory fallback otherwise (see `VERCEL.md`) |
 | Event indexer / metrics | Read from chain by the merchant panel |
-| Seed places (P1) | 2 demo places, shown only when no live campaign exists. The plan suggests 6 to 8 |
+| Seed places (P1) | 8 demo places in Lisbon and the expo, shown only when no live campaign exists |
 | Pay at counter, route campaign (P1) | Not done, roadmap |
 | Passkey wallet | Code present, depends on relayer and `NEXT_PUBLIC_WALLET_WASM_HASH`. Cut rule applies: local key is the demo path |
-| OpenZeppelin relayer | Not exercised. `SPONSOR_SECRET` fallback is the tested path |
+| OpenZeppelin relayer | Validated, time-boxed and falls back to `SPONSOR_SECRET` (unit tested with `pnpm test` in `apps/web`). Not yet run against a live relayer |
 | Automated e2e | `scripts/e2e-testnet.sh` (9 checks: valid claim, replay, second visit, forged signature, close refund) |
+
+## Serverless hardening
+
+- `/api/claim` returns a pending hash after 20 s and the client polls `/api/claim/status`, so Vercel limits are not hit.
+- Still open: vUSD trustline and i18n/onboarding (other threads), keys in `localStorage` (testnet only).
 
 ## Submission checklist
 
