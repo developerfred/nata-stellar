@@ -35,6 +35,8 @@ The merchant pays per proven visit, not per ad. The visitor gets real dollars th
 ```
 contracts/campaigns   Soroban escrow + proof-of-visit contract (Rust)
 apps/web              Visitor PWA + merchant dashboard (Next.js)
+packages/mcp          MCP server so AI agents can create and manage campaigns
+skills/nata           Claude skill that teaches an agent to use that MCP server
 docs/                 Build plan, pitch deck, submission notes
 ARCHITECTURE.md       How Stellar is used: assets, contract IDs, wallet, relayer, RPC
 ```
@@ -99,6 +101,25 @@ Set the project root to `apps/web`, add the variables above (secrets only as ser
 ### Languages and onboarding
 
 The UI is available in English, Portuguese and Spanish. The default comes from the browser language and the switcher in the header overrides it (saved in the browser). A first-run walkthrough explains escrowed budgets, the rotating QR, passkey claim, no-XLM fees and testnet-only rewards; the `?` button reopens it. Strings live in `apps/web/lib/i18n/dictionaries.ts`.
+
+## MCP server for agents
+
+`packages/mcp` is an [MCP](https://modelcontextprotocol.io) server (stdio) that lets an AI agent create and manage nata campaigns on **testnet**: `list_active_campaigns`, `get_campaign`, `get_claims`, `create_campaign`, `close_campaign`, `get_agent_account` and `request_faucet`. It reuses the web app's contract client, so encoding stays in sync.
+
+```bash
+cd packages/mcp && npm install && npm run build
+
+claude mcp add nata \
+  -e NATA_AGENT_SECRET=<testnet S... secret of the agent account> \
+  -e NATA_CAMPAIGNS_CONTRACT_ID=CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV \
+  -e NATA_TOKEN_CONTRACT_ID=CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD \
+  -e NATA_TOKEN_SYMBOL=vUSD \
+  -- node "$(pwd)/dist/index.js"
+```
+
+Safety: testnet only (other networks are refused), keys come from the environment and are never logged, budgets are capped per call (`NATA_MAX_BUDGET_PER_CALL`, default 100) and per session (`NATA_MAX_TOTAL_BUDGET`, default 500), and `dry_run` (or `NATA_DRY_RUN=true`) previews any write. Without `NATA_AGENT_SECRET` the server is read-only. `request_faucet` calls the web app's vUSD faucet when `NATA_FAUCET_URL` is set. All variables are in [`packages/mcp/.env.example`](packages/mcp/.env.example); run the tests with `npm test`.
+
+The skill in [`skills/nata`](skills/nata/SKILL.md) tells an agent when and how to use these tools. Copy it to `~/.claude/skills/nata` (or `.claude/skills/nata` in a project) to enable it.
 
 ## Demo instructions
 

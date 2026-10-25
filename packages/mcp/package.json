@@ -1,0 +1,28 @@
+{
+  "name": "@nata/mcp",
+  "version": "0.1.0",
+  "description": "MCP server that lets AI agents create and manage nata campaigns on Stellar testnet",
+  "private": true,
+  "type": "module",
+  "bin": { "nata-mcp": "dist/index.js" },
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --alias:@stellar/stellar-sdk=./node_modules/@stellar/stellar-sdk --alias:buffer=./node_modules/buffer --platform=node --format=esm --target=node20 --outfile=dist/index.js --banner:js=\"#!/usr/bin/env node\nimport{createRequire as __cr}from'module';const require=__cr(import.meta.url);\"",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@stellar/stellar-sdk": "^16.4.1",
+    "buffer": "^6.0.3",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5"
+  },
+  "engines": { "node": ">=20" }
+}
