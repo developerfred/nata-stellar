@@ -42,7 +42,9 @@ export function parseX402(env: Record<string, string | undefined>): X402Settings
   const network: X402Network = env.X402_NETWORK === "stellar:pubnet" ? "stellar:pubnet" : "stellar:testnet";
   const facilitatorUrl = (env.X402_FACILITATOR_URL ?? DEFAULT_FACILITATOR).trim().replace(/\/+$/, "");
   try {
-    if (new URL(facilitatorUrl).protocol !== "https:") return null;
+    const u = new URL(facilitatorUrl);
+    const local = u.hostname === "localhost" || u.hostname === "127.0.0.1";
+    if (u.protocol !== "https:" && !(local && u.protocol === "http:")) return null;
   } catch {
     return null;
   }

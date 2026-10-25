@@ -29,6 +29,7 @@ test("parseX402 applies defaults and validates the facilitator", () => {
   assert.equal(s.facilitatorUrl, "https://www.x402.org/facilitator");
   assert.equal(s.facilitatorApiKey, null);
   assert.equal(parseX402({ X402_PAY_TO: PAY_TO, X402_ASSET: TOKEN, X402_FACILITATOR_URL: "http://x.test" }), null);
+  assert.ok(parseX402({ X402_PAY_TO: PAY_TO, X402_ASSET: TOKEN, X402_FACILITATOR_URL: "http://localhost:3222" }));
   const oz = parseX402({
     X402_PAY_TO: PAY_TO,
     X402_ASSET: TOKEN,
