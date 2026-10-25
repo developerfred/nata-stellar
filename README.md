@@ -153,4 +153,4 @@ None. Everything in this repository was built during HackMeridian; see the dated
 
 ## License
 
-[MIT](LICENSE)
+[Apache-2.0](LICENSE)
