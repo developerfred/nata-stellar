@@ -78,27 +78,11 @@ pnpm dev                       # http://localhost:3000
 | `NEXT_PUBLIC_EXPLORER_URL` | client | Explorer base URL for transaction links | `https://stellar.expert/explorer/testnet` |
 | `NEXT_PUBLIC_TOKEN_CONTRACT_ID` | client | Token (SAC) used for budgets and rewards | none, required |
 | `NEXT_PUBLIC_TOKEN_SYMBOL` | client | Token symbol shown in the UI | `USDC` |
-| `NEXT_PUBLIC_TOKEN_ISSUER` | client | Issuer (`G…`) of the classic asset behind the token, used for the sponsored trustline of device wallets | none |
-| `NEXT_PUBLIC_FRIENDBOT_URL` | client | Friendbot used to open device wallets and merchant accounts on testnet | `https://friendbot.stellar.org` |
-| `NEXT_PUBLIC_WALLET_WASM_HASH` | client | Passkey smart wallet WASM hash; empty means device wallets | none |
-| `RELAYER_URL` | server | Fee-sponsoring relayer base URL | none |
-| `RELAYER_API_KEY` | server | Relayer API key. Never exposed to the browser | none |
-| `SPONSOR_SECRET` | server | Sponsor account (`S…`): pays fees and signs fee bumps for trustlines | none |
-| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | server | Shared rate-limit store (Vercel KV works too). Without it limits are per serverless instance | none |
+| `RELAYER_URL` | server | Fee-sponsoring relayer base URL, for example `https://channels.openzeppelin.com/testnet` | none (optional) |
+| `RELAYER_API_KEY` | server | Relayer API key. Never exposed to the browser | none (optional) |
+| `SPONSOR_SECRET` | server | Funded testnet account (`S…`) that pays fees when no relayer is configured | none |
 
-`NEXT_PUBLIC_*` values are baked into the browser bundle at build time, so they must never hold secrets. Server-only variables are read in API routes. Never commit `.env.local`.
-
-### Deploying on Vercel
-
-Set the project root to `apps/web`, add the variables above (secrets only as server variables), and deploy. The app keeps no state on disk or in process memory: campaigns are read from the contract on every request, rate limits use the optional Redis store, and the claim, wallet and trustline routes declare a 60 s function timeout. Device wallets get their reward-token trustline automatically (signed by the visitor, fee-bumped by the sponsor), so a new tester's first claim works without XLM.
-
-### vUSD faucet
-
-`/faucet` lets anyone mint test vUSD (100 per request) to fund a campaign or try a claim. The server route signs with `FAUCET_SECRET`, which must be the vUSD issuer key, so use a dedicated testnet issuer and keep it server-only (it can mint without limit). Limits per address, per IP and per UTC day (`FAUCET_*` variables) use the shared Redis limiter; on Vercel the faucet refuses to run without it. Accounts created in the browser (device wallet, merchant counter key) get their trustline automatically; a pasted `G…` address must already trust vUSD, while passkey `C…` wallets need nothing. Concurrent requests race for the issuer's sequence number, so the route retries with a fresh sequence and jitter, and returns a pending hash that the page polls if confirmation takes longer than about 8 s.
-
-### Languages and onboarding
-
-The UI is available in English, Portuguese and Spanish. The default comes from the browser language and the switcher in the header overrides it (saved in the browser). A first-run walkthrough explains escrowed budgets, the rotating QR, passkey claim, no-XLM fees and testnet-only rewards; the `?` button reopens it. Strings live in `apps/web/lib/i18n/dictionaries.ts`.
+> Set either the relayer pair or `SPONSOR_SECRET`. Never commit `.env.local`.
 
 ## Demo instructions
 
@@ -125,9 +109,9 @@ The UI is available in English, Portuguese and Spanish. The default comes from t
 | `create_campaign` | [a8746e3a…2fec](https://stellar.expert/explorer/testnet/tx/a8746e3a8524e9a92dc0ab21d0ce11f04d4c5ff48ea7b85a366817fc95322fec) |
 | `claim` (accepted, 2 vUSD) | [82f51bda…b46e](https://stellar.expert/explorer/testnet/tx/82f51bda8bd34273881e0eb55c1b0c9316e0232bd8f963a44d76e472e327b46e) |
 | `claim` (refused: reused QR, second visit) | No transaction. The server simulates first and returns `This QR code was already used` / `You already collected this reward.` before any fee is spent |
+| `close_campaign` (refund, from the e2e script run) | [d658aeb3…a592](https://stellar.expert/explorer/testnet/tx/d658aeb3a14b5971b0574cd33860d3b562cf4aaf028ea06e9f48dd97a12fa592) |
 
-Deployed on Stellar Testnet: token (SAC of `vUSD`) `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD`, issuer `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26`, demo campaign id `0` (2 vUSD per visit, 100 vUSD budget, 50 claims max).
-| `close_campaign` | `TODO: <explorer link>` |
+Deployed on Stellar Testnet: token (SAC of `vUSD`) `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD`, issuer `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26`, demo campaign id `0` (2 vUSD per visit, 100 vUSD budget, 50 claims max). Contract [deploy tx](https://stellar.expert/explorer/testnet/tx/d6032e522576e42e8c2fdb20a6f35771d9bcb15230f277925b6ff85715404bb3).
 
 ## Automated end-to-end check (testnet)
 
@@ -169,4 +153,4 @@ None. Everything in this repository was built during HackMeridian; see the dated
 
 ## License
 
-`TODO: choose a license`
+[Apache-2.0](LICENSE)
