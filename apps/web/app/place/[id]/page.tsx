@@ -12,7 +12,7 @@ async function Place({ id }: { id: string }) {
 
 export default function PlacePage({ params }: PageProps<"/place/[id]">) {
   return (
-    <Suspense fallback={<div className="card h-64 animate-pulse" />}>
+    <Suspense fallback={<div className="skeleton h-64" />}>
       <PlaceResolver params={params} />
     </Suspense>
   );

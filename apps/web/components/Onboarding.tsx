@@ -45,6 +45,14 @@ export function Onboarding() {
     if (open) next.current?.focus();
   }, [open, step]);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+     
+  }, [open]);
+
   function close() {
     try {
       localStorage.setItem(SEEN, "1");
@@ -60,21 +68,23 @@ export function Onboarding() {
   const last = step === STEPS.length - 1;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 p-4 sm:items-center" role="dialog" aria-modal="true" aria-labelledby="ob-title">
-      <div className="card grid w-full max-w-md gap-4 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#0d1424]/60 p-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:items-center" role="dialog" aria-modal="true" aria-labelledby="ob-title">
+      <div className="card rise grid w-full max-w-md gap-4 overflow-hidden !p-0">
+        <div className="azulejo-band" aria-hidden />
+        <div className="grid gap-4 p-5 pt-3">
         <div className="flex items-center justify-between gap-2">
           <p className="label">{t("ob.step", { n, total: STEPS.length })}</p>
           <LanguageSwitcher />
         </div>
-        <div className="text-5xl" aria-hidden>{ICONS[step]}</div>
-        <h2 id="ob-title" className="text-2xl font-extrabold tracking-tight">{t(`ob.${n}.title` as Key)}</h2>
+        <div className="grid size-16 place-items-center rounded-[var(--radius)] bg-azul-soft text-4xl shadow-[inset_0_0_0_1px_var(--azul)]" aria-hidden>{ICONS[step]}</div>
+        <h2 id="ob-title" className="display text-3xl">{t(`ob.${n}.title` as Key)}</h2>
         <p className="text-muted">{t(`ob.${n}.body` as Key)}</p>
         {n === 4 && (
-          <Link href="/faucet" onClick={close} className="text-sm font-semibold underline">{t("faucet.title")} →</Link>
+          <Link href="/faucet" onClick={close} className="inline-flex min-h-11 items-center text-sm font-semibold text-azul underline">{t("faucet.title")} →</Link>
         )}
         <div className="flex justify-center gap-1.5" aria-hidden>
           {STEPS.map((s, i) => (
-            <span key={s} className={`h-1.5 w-6 rounded-full ${i === step ? "bg-custard" : "bg-line"}`} />
+            <span key={s} className={`h-1.5 w-6 rounded-full ${i === step ? "bg-azul" : "bg-line"}`} />
           ))}
         </div>
         <div className="flex items-center gap-2">
@@ -86,6 +96,7 @@ export function Onboarding() {
           <button ref={next} className="btn flex-1" onClick={last ? close : () => setStep(step + 1)}>
             {last ? t("ob.start") : t("ob.next")}
           </button>
+        </div>
         </div>
       </div>
     </div>

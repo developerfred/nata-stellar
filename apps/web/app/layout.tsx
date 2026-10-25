@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f2b33d",
+  themeColor: "#1d4ba0",
   width: "device-width",
   initialScale: 1,
 };
@@ -24,9 +24,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <I18nProvider>
           <SiteHeader />
           <Onboarding />
-          <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-6">{children}</main>
-          <footer className="mx-auto w-full max-w-2xl px-4 pb-8 text-xs text-muted">
-            <T k="footer.testnet" />
+          <main className="mx-auto w-full max-w-2xl flex-1 px-4 py-8 sm:py-12">{children}</main>
+          <footer className="mt-8">
+            <div className="azulejo-band" aria-hidden />
+            <p className="mx-auto w-full max-w-2xl px-4 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-xs text-muted">
+              <T k="footer.testnet" />
+            </p>
           </footer>
         </I18nProvider>
       </body>

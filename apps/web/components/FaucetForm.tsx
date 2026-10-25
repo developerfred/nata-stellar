@@ -85,8 +85,8 @@ export function FaucetForm() {
         <label className="label" htmlFor="addr">{t("faucet.address")}</label>
         <input id="addr" className="input font-mono text-sm" required value={address} onChange={(e) => setAddress(e.target.value)} placeholder="G… / C…" autoComplete="off" spellCheck={false} />
         <div className="mt-2 flex flex-wrap gap-2 text-sm">
-          {wallet && <button type="button" className="btn btn-ghost !min-h-9" onClick={() => setAddress(wallet)}>{t("faucet.useWallet")}</button>}
-          {merchant && <button type="button" className="btn btn-ghost !min-h-9" onClick={() => setAddress(merchant)}>{t("faucet.useMerchant")}</button>}
+          {wallet && <button type="button" className="btn btn-ghost !min-h-11" onClick={() => setAddress(wallet)}>{t("faucet.useWallet")}</button>}
+          {merchant && <button type="button" className="btn btn-ghost !min-h-11" onClick={() => setAddress(merchant)}>{t("faucet.useMerchant")}</button>}
         </div>
       </div>
       <button className="btn" disabled={state.kind === "working" || !address.trim()}>
@@ -94,14 +94,14 @@ export function FaucetForm() {
       </button>
       <p className="text-xs text-muted">{t("faucet.note")}</p>
       {state.kind === "done" && (
-        <div className="text-sm text-ok" role="status">
+        <div className="rise rounded-[var(--radius)] bg-azul-soft p-3 text-sm text-ok" role="status">
           <p className="font-semibold">{t("faucet.done", { amount: state.amount, symbol: config.tokenSymbol })}</p>
-          <a className="underline" href={state.explorer} target="_blank" rel="noreferrer">{t("claim.viewTx")}</a>
+          <a className="inline-flex min-h-11 items-center underline" href={state.explorer} target="_blank" rel="noreferrer">{t("claim.viewTx")}</a>
           {" · "}
           <Link className="underline" href="/merchant">{t("nav.merchant")}</Link>
         </div>
       )}
-      {state.kind === "error" && <p role="alert" className="text-sm text-burnt">{state.message}</p>}
+      {state.kind === "error" && <p role="alert" className="rounded-[var(--radius)] border border-burnt p-3 text-sm text-burnt">{state.message}</p>}
     </form>
   );
 }
