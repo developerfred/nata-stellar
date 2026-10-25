@@ -17,12 +17,12 @@ nata is a pay-per-visit campaign network on **Stellar Testnet**. Funds and rules
 
 | Resource | Identifier | Notes |
 |---|---|---|
-| `campaigns` contract | `TODO: C…` | Escrow + proof-of-visit. Explorer: `TODO` |
-| Reward token (SAC) | `TODO: C…` | Circle testnet USDC, or fallback `vUSD` issued by the team |
-| `vUSD` issuer (if used) | `TODO: G…` | Only if the Circle faucet is unavailable |
-| Fee sponsor / relayer | `TODO` | OpenZeppelin Relayer Channels, or a sponsor account `G…` as fallback |
-| Smart wallet factory / WebAuthn verifier | `TODO` | From `passkey-kit` deployment |
-| Demo merchant wallet | `TODO: C… or G…` | Funds the demo campaign |
+| `campaigns` contract | `CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV` | Escrow + proof-of-visit. [Explorer](https://stellar.expert/explorer/testnet/contract/CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV) |
+| Reward token (SAC) | `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD` | `vUSD`, the team-issued testnet token (Circle testnet USDC was not used) |
+| `vUSD` issuer | `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26` | Classic asset issuer behind the SAC. Its secret (`FAUCET_SECRET`) powers the faucet and is server-only |
+| Fee sponsor / relayer | Sponsor account `G…`: `TODO: address of the deployed SPONSOR_SECRET account` | Server pays fees from `SPONSOR_SECRET`. Optional OpenZeppelin relayer (`RELAYER_URL`, `https://channels.openzeppelin.com/testnet`) is tried first when configured and falls back to the sponsor. The relayer path has not been run against a live relayer |
+| Smart wallet WASM | `NEXT_PUBLIC_WALLET_WASM_HASH` (`TODO: hash from the passkey-kit deployment`) | Left empty in `.env.example`; without it the app uses device wallets (local keys) instead of passkey wallets |
+| Demo merchant wallet | `TODO: G… that funded demo campaign 0` | Funds the demo campaign (id `0`, 2 vUSD per visit, 100 vUSD budget, 50 claims max) |
 | RPC | `https://soroban-testnet.stellar.org` | Network passphrase `Test SDF Network ; September 2015` |
 | Explorer | `https://stellar.expert/explorer/testnet` | |
 
@@ -91,4 +91,6 @@ Spending the cashback at other merchants (QR charge + passkey payment), multi-st
 
 ## Agent access (MCP)
 
-`packages/mcp` exposes the same contract client as the web app through an MCP server, so AI agents can create, inspect and close campaigns from an agent-owned testnet merchant account, with per-call and per-session budget caps and a dry-run mode. See the README section "MCP server for agents" and `skills/nata`.
+`packages/mcp` exposes the same contract client as the web app through an MCP server, so AI agents can create, inspect and close campaigns from an agent-owned testnet merchant account, with per-call and per-session budget caps and a dry-run mode. See the README section "MCP server for agents", [`docs/mcp-and-skill.md`](docs/mcp-and-skill.md), the in-app `/docs` page and `skills/nata`.
+
+Full documentation index: [`docs/README.md`](docs/README.md).

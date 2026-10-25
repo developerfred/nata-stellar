@@ -136,7 +136,7 @@ The skill in [`skills/nata`](skills/nata/SKILL.md) tells an agent when and how t
 
 1. **Merchant:** open `/merchant`, register a place, create a campaign (reward, budget, window), and open **Counter mode** to show the rotating QR.
 2. **Visitor:** scan the QR and claim. Balance and history update.
-3. **Security checks:** replay an old QR, or claim twice with the same wallet. The contract rejects both (see the refused-claim link below).
+3. **Security checks:** replay an old QR, or claim twice with the same wallet. The contract rejects both (there is no transaction to link: see the refused-claim row below).
 4. **Merchant:** check the dashboard for visits, cost per visit and remaining budget, then close the campaign to recover unspent funds.
 
 ### Testnet transaction evidence
@@ -145,7 +145,7 @@ The skill in [`skills/nata`](skills/nata/SKILL.md) tells an agent when and how t
 |---|---|
 | `create_campaign` | [a8746e3a…2fec](https://stellar.expert/explorer/testnet/tx/a8746e3a8524e9a92dc0ab21d0ce11f04d4c5ff48ea7b85a366817fc95322fec) |
 | `claim` (accepted, 2 vUSD) | [82f51bda…b46e](https://stellar.expert/explorer/testnet/tx/82f51bda8bd34273881e0eb55c1b0c9316e0232bd8f963a44d76e472e327b46e) |
-| `claim` (refused: reused QR, second visit) | No transaction. The server simulates first and returns `This QR code was already used` / `You already collected this reward.` before any fee is spent |
+| `claim` (refused: reused QR, second visit) | No transaction exists, by design. `/api/claim` simulates the call first (`prepareTransaction` in `apps/web/app/api/claim/route.ts`), so the contract's `NonceUsed` / `AlreadyClaimed` errors surface as `This QR code was already used` / `You already collected this reward.` before anything is submitted or any fee is spent. Evidence: the `reused QR rejected`, `second visit rejected` and `forged ticket rejected` PASS lines printed by `scripts/e2e-testnet.sh`, and the contract tests in `contracts/campaigns/src/test.rs` |
 
 Deployed on Stellar Testnet: token (SAC of `vUSD`) `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD`, issuer `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26`, demo campaign id `0` (2 vUSD per visit, 100 vUSD budget, 50 claims max).
 | `close_campaign` | `TODO: <explorer link>` |
