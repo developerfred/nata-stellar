@@ -15,12 +15,15 @@ Deadline: Mon Oct 26, 12:00 (Lisbon).
 
 ## Blockers that need the founder
 
-- [ ] Make the GitHub repository public
 - [ ] Deploy to Vercel (Root Directory `apps/web`, env vars from `.env.example`) and fund the sponsor account
 - [ ] Confirm a fresh browser wallet can claim vUSD (trustline, see `docs/VERCEL.md`)
 - [ ] Record the 3 min English demo video (`nata-video/` script and storyboard) and add the URL
 - [ ] Fill the remaining placeholders: live URL, video URL, demo QR, license, `close_campaign` link
 - [ ] Add the Team slide and live URL/QR to the pitch deck
 - [ ] Submit, target 11:00
+
+## Later decision
+
+- The repository stays private for now. HackMeridian requires a public repository, so it must be made public before submitting.
 
 Remaining placeholders: `grep -rn TODO README.md ARCHITECTURE.md docs/`
