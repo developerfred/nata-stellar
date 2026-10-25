@@ -8,7 +8,7 @@
 |---|---|
 | Live app | `TODO: https://<deployment>.vercel.app` |
 | Demo video | `TODO: <video URL>` |
-| Pitch deck | [docs/nata-pitch-deck.pptx](docs/nata-pitch-deck.pptx) |
+| Pitch deck | [docs/nata-pitch-deck-hackmeridian.pptx](docs/nata-pitch-deck-hackmeridian.pptx) |
 | Architecture | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | Campaigns contract (testnet) | [`CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV`](https://stellar.expert/explorer/testnet/contract/CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV) |
 
@@ -37,7 +37,7 @@ contracts/campaigns   Soroban escrow + proof-of-visit contract (Rust)
 apps/web              Visitor PWA + merchant dashboard (Next.js)
 packages/mcp          MCP server so AI agents can create and manage campaigns
 skills/nata           Claude skill that teaches an agent to use that MCP server
-docs/                 Project documentation (index: docs/README.md), build plan, pitch deck, submission notes
+docs/                 Project documentation (index: docs/README.md), build plan, pitch deck, submission notes; x402 demo in docs/X402.md
 ARCHITECTURE.md       How Stellar is used: assets, contract IDs, wallet, relayer, RPC
 ```
 
@@ -83,24 +83,12 @@ pnpm dev                       # http://localhost:3000
 | `NEXT_PUBLIC_TOKEN_ISSUER` | client | Issuer (`G…`) of the classic asset behind the token, used for the sponsored trustline of device wallets | none |
 | `NEXT_PUBLIC_FRIENDBOT_URL` | client | Friendbot used to open device wallets and merchant accounts on testnet | `https://friendbot.stellar.org` |
 | `NEXT_PUBLIC_WALLET_WASM_HASH` | client | Passkey smart wallet WASM hash; empty means device wallets | none |
-| `RELAYER_URL` | server | Fee-sponsoring relayer base URL | none |
-| `RELAYER_API_KEY` | server | Relayer API key. Never exposed to the browser | none |
-| `SPONSOR_SECRET` | server | Sponsor account (`S…`): pays fees and signs fee bumps for trustlines | none |
+| `RELAYER_URL` | server | Fee-sponsoring relayer base URL | none (optional) |
+| `RELAYER_API_KEY` | server | Relayer API key. Never exposed to the browser | none (optional) |
+| `SPONSOR_SECRET` | server | Sponsor account (`S…`): pays fees when no relayer is configured and signs fee bumps for trustlines | none |
 | `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | server | Shared rate-limit store (Vercel KV works too). Without it limits are per serverless instance | none |
 
-`NEXT_PUBLIC_*` values are baked into the browser bundle at build time, so they must never hold secrets. Server-only variables are read in API routes. Never commit `.env.local`.
-
-### Deploying on Vercel
-
-Set the project root to `apps/web`, add the variables above (secrets only as server variables), and deploy. The app keeps no state on disk or in process memory: campaigns are read from the contract on every request, rate limits use the optional Redis store, and the claim, wallet and trustline routes declare a 60 s function timeout. Device wallets get their reward-token trustline automatically (signed by the visitor, fee-bumped by the sponsor), so a new tester's first claim works without XLM.
-
-### vUSD faucet
-
-`/faucet` lets anyone mint test vUSD (100 per request) to fund a campaign or try a claim. The server route signs with `FAUCET_SECRET`, which must be the vUSD issuer key, so use a dedicated testnet issuer and keep it server-only (it can mint without limit). Limits per address, per IP and per UTC day (`FAUCET_*` variables) use the shared Redis limiter; on Vercel the faucet refuses to run without it. Accounts created in the browser (device wallet, merchant counter key) get their trustline automatically; a pasted `G…` address must already trust vUSD, while passkey `C…` wallets need nothing. Concurrent requests race for the issuer's sequence number, so the route retries with a fresh sequence and jitter, and returns a pending hash that the page polls if confirmation takes longer than about 8 s.
-
-### Languages and onboarding
-
-The UI is available in English, Portuguese and Spanish. The default comes from the browser language and the switcher in the header overrides it (saved in the browser). A first-run walkthrough explains escrowed budgets, the rotating QR, passkey claim, no-XLM fees and testnet-only rewards; the `?` button reopens it. Strings live in `apps/web/lib/i18n/dictionaries.ts`.
+> Set either the relayer pair or `SPONSOR_SECRET`. Never commit `.env.local`.
 
 ## MCP server for agents
 

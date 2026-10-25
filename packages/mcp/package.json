@@ -17,7 +17,7 @@
     "@modelcontextprotocol/sdk": "^1.32.2",
     "@stellar/stellar-sdk": "^16.4.1",
     "buffer": "^6.0.3",
-    "zod": "^3.25.0"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^20",

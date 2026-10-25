@@ -8,10 +8,15 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test lib/server/fallback.test.ts"
+    "test": "node --test lib/server/fallback.test.ts lib/server/x402.test.ts && node --import ./lib/server/test-resolve.mjs --test lib/server/x402-gate.test.ts",
+    "x402:e2e": "node scripts/x402-e2e.mjs"
   },
   "dependencies": {
     "@stellar/stellar-sdk": "^16.4.1",
+    "@x402/core": "^2.28.0",
+    "@x402/next": "^2.28.0",
+    "@x402/paywall": "^2.28.0",
+    "@x402/stellar": "^2.28.0",
     "@zxing/browser": "^0.2.1",
     "buffer": "^6.0.3",
     "next": "16.4.3",
@@ -26,6 +31,7 @@
     "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@x402/fetch": "^2.28.0",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
     "tailwindcss": "^4",
