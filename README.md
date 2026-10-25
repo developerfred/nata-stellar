@@ -113,6 +113,26 @@ pnpm dev                       # http://localhost:3000
 Deployed on Stellar Testnet: token (SAC of `vUSD`) `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD`, issuer `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26`, demo campaign id `0` (2 vUSD per visit, 100 vUSD budget, 50 claims max).
 | `close_campaign` | `TODO: <explorer link>` |
 
+## Automated end-to-end check (testnet)
+
+```bash
+pnpm --dir apps/web dev &                       # optional: with the app running, claims go through /api/claim
+CAMPAIGNS_ID=<C… address> scripts/e2e-testnet.sh   # omit CAMPAIGNS_ID to deploy a fresh contract
+```
+
+The script funds throwaway testnet accounts, issues `vUSD`, creates a campaign, signs counter tickets, and checks that a valid claim pays, a reused QR, a second visit and a forged signature are refused, and that `close_campaign` refunds the merchant. It needs `stellar` (CLI 25.2 or newer), `node` and `curl`.
+
+### Fee sponsorship with the OpenZeppelin relayer
+
+By default the server pays fees from `SPONSOR_SECRET`. To use the relayer instead, generate a testnet API key at <https://channels.openzeppelin.com/testnet/gen> and set, in `apps/web/.env.local`:
+
+```
+RELAYER_URL=https://channels.openzeppelin.com/testnet
+RELAYER_API_KEY=<your key>
+```
+
+When both are set, `/api/claim` and `/api/wallet` submit through the relayer and `SPONSOR_SECRET` is not needed. Passkey wallets also need `NEXT_PUBLIC_WALLET_WASM_HASH`. The relayer path has not been exercised yet.
+
 ## Security model
 
 | Attack | Mitigation |
