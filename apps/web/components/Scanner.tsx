@@ -3,11 +3,14 @@
 import { BrowserQRCodeReader, type IScannerControls } from "@zxing/browser";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useT } from "@/lib/i18n";
+import type { Key } from "@/lib/i18n/dictionaries";
 
 export function Scanner() {
   const video = useRef<HTMLVideoElement>(null);
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+  const t = useT();
+  const [error, setError] = useState<Key | null>(null);
 
   useEffect(() => {
     let controls: IScannerControls | undefined;
@@ -23,17 +26,17 @@ export function Scanner() {
             controls?.stop();
             router.push(`/claim?${url.searchParams.toString()}`);
           } else {
-            setError("That QR is not a nata counter code.");
+            setError("scan.notNata");
           }
         } catch {
-          setError("That QR is not a nata counter code.");
+          setError("scan.notNata");
         }
       })
       .then((c) => {
         controls = c;
         if (done) c.stop();
       })
-      .catch(() => setError("Camera unavailable. Allow camera access, or scan with your phone's camera app."));
+      .catch(() => setError("scan.noCamera"));
     return () => {
       done = true;
       controls?.stop();
@@ -46,8 +49,8 @@ export function Scanner() {
         <video ref={video} className="h-full w-full object-cover" muted playsInline />
         <div className="pointer-events-none absolute inset-8 rounded-2xl border-4 border-custard/90" />
       </div>
-      {error && <p role="alert" className="text-sm text-burnt">{error}</p>}
-      <p className="text-sm text-muted">Point the camera at the QR code shown at the counter. It refreshes every 20 seconds.</p>
+      {error && <p role="alert" className="text-sm text-burnt">{t(error)}</p>}
+      <p className="text-sm text-muted">{t("scan.hint")}</p>
     </div>
   );
 }

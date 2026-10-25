@@ -1,3 +1,4 @@
+import { T } from "@/lib/i18n";
 import { isConfigured } from "@/lib/config";
 import { SEED_PLACES } from "@/lib/seed";
 import { listCampaigns } from "@/lib/server/campaigns";
@@ -25,15 +26,11 @@ export async function PlaceList() {
   return (
     <div className="grid gap-3">
       <p className="card text-sm text-muted">
-        {failed
-          ? "Could not reach the network. Showing examples."
-          : isConfigured()
-            ? "No live campaigns yet. Merchants can create one in the Merchant tab. Examples below."
-            : "Contract not configured on this deployment. Showing examples."}
+        <T k={failed ? "list.failed" : isConfigured() ? "list.empty" : "list.unconfigured"} />
       </p>
       {SEED_PLACES.map((p) => (
         <div key={p.name} className="card opacity-80">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted">{p.kind} · demo listing</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted">{p.kind} · <T k="list.demo" /></p>
           <h3 className="text-lg font-bold">{p.name}</h3>
           <p className="mt-1 text-sm text-muted">{p.address}</p>
           <p className="mt-3 text-sm">{p.promo}</p>
