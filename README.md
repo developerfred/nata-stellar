@@ -78,11 +78,23 @@ pnpm dev                       # http://localhost:3000
 | `NEXT_PUBLIC_EXPLORER_URL` | client | Explorer base URL for transaction links | `https://stellar.expert/explorer/testnet` |
 | `NEXT_PUBLIC_TOKEN_CONTRACT_ID` | client | Token (SAC) used for budgets and rewards | none, required |
 | `NEXT_PUBLIC_TOKEN_SYMBOL` | client | Token symbol shown in the UI | `USDC` |
-| `RELAYER_URL` | server | Fee-sponsoring relayer base URL | `TODO` |
-| `RELAYER_API_KEY` | server | Relayer API key. Never exposed to the browser | `TODO` |
-| `SPONSOR_SECRET` | server | Fallback sponsor account (`S…`) if the relayer is unavailable | `TODO` |
+| `NEXT_PUBLIC_TOKEN_ISSUER` | client | Issuer (`G…`) of the classic asset behind the token, used for the sponsored trustline of device wallets | none |
+| `NEXT_PUBLIC_FRIENDBOT_URL` | client | Friendbot used to open device wallets and merchant accounts on testnet | `https://friendbot.stellar.org` |
+| `NEXT_PUBLIC_WALLET_WASM_HASH` | client | Passkey smart wallet WASM hash; empty means device wallets | none |
+| `RELAYER_URL` | server | Fee-sponsoring relayer base URL | none |
+| `RELAYER_API_KEY` | server | Relayer API key. Never exposed to the browser | none |
+| `SPONSOR_SECRET` | server | Sponsor account (`S…`): pays fees and signs fee bumps for trustlines | none |
+| `UPSTASH_REDIS_REST_URL` / `UPSTASH_REDIS_REST_TOKEN` | server | Shared rate-limit store (Vercel KV works too). Without it limits are per serverless instance | none |
 
-> The last four rows depend on the wallet/relayer integration; update them as that work lands. Never commit `.env.local`.
+`NEXT_PUBLIC_*` values are baked into the browser bundle at build time, so they must never hold secrets. Server-only variables are read in API routes. Never commit `.env.local`.
+
+### Deploying on Vercel
+
+Set the project root to `apps/web`, add the variables above (secrets only as server variables), and deploy. The app keeps no state on disk or in process memory: campaigns are read from the contract on every request, rate limits use the optional Redis store, and the claim, wallet and trustline routes declare a 60 s function timeout. Device wallets get their reward-token trustline automatically (signed by the visitor, fee-bumped by the sponsor), so a new tester's first claim works without XLM.
+
+### Languages and onboarding
+
+The UI is available in English, Portuguese and Spanish. The default comes from the browser language and the switcher in the header overrides it (saved in the browser). A first-run walkthrough explains escrowed budgets, the rotating QR, passkey claim, no-XLM fees and testnet-only rewards; the `?` button reopens it. Strings live in `apps/web/lib/i18n/dictionaries.ts`.
 
 ## Demo instructions
 

@@ -1,5 +1,5 @@
 import "server-only";
-import { Keypair, Transaction } from "@stellar/stellar-sdk";
+import { FeeBumpTransaction, Keypair, Transaction } from "@stellar/stellar-sdk";
 import { PasskeyServer } from "passkey-kit/server";
 import { config } from "../config";
 import { rpcServer } from "../chain";
@@ -28,8 +28,13 @@ export async function submitSponsored(tx: Transaction): Promise<string> {
     if (!res.success) throw new Error(res.error.message || "Relayer rejected the transaction");
     return res.hash;
   }
-  const rpc = rpcServer();
   tx.sign(sponsorKeypair());
+  return sendAndWait(tx);
+}
+
+/** Sends an already signed transaction and polls until it lands (bounded, well under the function timeout). */
+export async function sendAndWait(tx: Transaction | FeeBumpTransaction): Promise<string> {
+  const rpc = rpcServer();
   const sent = await rpc.sendTransaction(tx);
   if (sent.status === "ERROR") throw new Error("Transaction rejected by the network");
   for (let i = 0; i < 30; i++) {
