@@ -17,12 +17,12 @@ nata is a pay-per-visit campaign network on **Stellar Testnet**. Funds and rules
 
 | Resource | Identifier | Notes |
 |---|---|---|
-| `campaigns` contract | `CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV` | Escrow + proof-of-visit. [Explorer](https://stellar.expert/explorer/testnet/contract/CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV) |
-| Reward token (SAC) | `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD` | `vUSD`, the team-issued testnet token (Circle testnet USDC was not used) |
-| `vUSD` issuer | `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26` | Classic asset issuer behind the SAC. Its secret (`FAUCET_SECRET`) powers the faucet and is server-only |
-| Fee sponsor / relayer | Sponsor account `G…`: `TODO: address of the deployed SPONSOR_SECRET account` | Server pays fees from `SPONSOR_SECRET`. Optional OpenZeppelin relayer (`RELAYER_URL`, `https://channels.openzeppelin.com/testnet`) is tried first when configured and falls back to the sponsor. The relayer path has not been run against a live relayer |
-| Smart wallet WASM | `NEXT_PUBLIC_WALLET_WASM_HASH` (`TODO: hash from the passkey-kit deployment`) | Left empty in `.env.example`; without it the app uses device wallets (local keys) instead of passkey wallets |
-| Demo merchant wallet | `TODO: G… that funded demo campaign 0` | Funds the demo campaign (id `0`, 2 vUSD per visit, 100 vUSD budget, 50 claims max) |
+| `campaigns` contract | `CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV` | Escrow + proof-of-visit. [Explorer](https://stellar.expert/explorer/testnet/contract/CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV), [deploy tx](https://stellar.expert/explorer/testnet/tx/d6032e522576e42e8c2fdb20a6f35771d9bcb15230f277925b6ff85715404bb3) |
+| Reward token (SAC) | `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD` | SAC of the team-issued `vUSD` asset (Circle testnet USDC is the intended swap-in) |
+| `vUSD` issuer | `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26` | Classic issuer account of `vUSD` |
+| Fee sponsor | `GDPKJVLYS6P6FKXCJZ7RS6RXQJL3DCAQWMFGB4HWQVXZWMJMYZSOPI5I` | Server-side `SPONSOR_SECRET` account that pays fees today. OpenZeppelin Relayer Channels (`https://channels.openzeppelin.com/testnet`) is supported through `RELAYER_URL` and `RELAYER_API_KEY` |
+| Smart wallet factory / WebAuthn verifier | Not deployed | Passkey wallets need `NEXT_PUBLIC_WALLET_WASM_HASH` and a relayer. Without them visitors use a browser-held key |
+| Demo merchant wallet | `GCTWNUAFWMJSJSVOUACVBWVCDBDPATIF5UDQKPBCBHMBGVPJFJ24F4DY` | Funds demo campaign `0` (2 vUSD per visit, 100 vUSD budget) |
 | RPC | `https://soroban-testnet.stellar.org` | Network passphrase `Test SDF Network ; September 2015` |
 | Explorer | `https://stellar.expert/explorer/testnet` | |
 

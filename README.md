@@ -37,7 +37,7 @@ contracts/campaigns   Soroban escrow + proof-of-visit contract (Rust)
 apps/web              Visitor PWA + merchant dashboard (Next.js)
 packages/mcp          MCP server so AI agents can create and manage campaigns
 skills/nata           Claude skill that teaches an agent to use that MCP server
-docs/                 Build plan, pitch deck, submission notes
+docs/                 Project documentation (index: docs/README.md), build plan, pitch deck, submission notes
 ARCHITECTURE.md       How Stellar is used: assets, contract IDs, wallet, relayer, RPC
 ```
 
@@ -146,9 +146,9 @@ The skill in [`skills/nata`](skills/nata/SKILL.md) tells an agent when and how t
 | `create_campaign` | [a8746e3a…2fec](https://stellar.expert/explorer/testnet/tx/a8746e3a8524e9a92dc0ab21d0ce11f04d4c5ff48ea7b85a366817fc95322fec) |
 | `claim` (accepted, 2 vUSD) | [82f51bda…b46e](https://stellar.expert/explorer/testnet/tx/82f51bda8bd34273881e0eb55c1b0c9316e0232bd8f963a44d76e472e327b46e) |
 | `claim` (refused: reused QR, second visit) | No transaction exists, by design. `/api/claim` simulates the call first (`prepareTransaction` in `apps/web/app/api/claim/route.ts`), so the contract's `NonceUsed` / `AlreadyClaimed` errors surface as `This QR code was already used` / `You already collected this reward.` before anything is submitted or any fee is spent. Evidence: the `reused QR rejected`, `second visit rejected` and `forged ticket rejected` PASS lines printed by `scripts/e2e-testnet.sh`, and the contract tests in `contracts/campaigns/src/test.rs` |
+| `close_campaign` (refund, from the e2e script run) | [d658aeb3…a592](https://stellar.expert/explorer/testnet/tx/d658aeb3a14b5971b0574cd33860d3b562cf4aaf028ea06e9f48dd97a12fa592) |
 
-Deployed on Stellar Testnet: token (SAC of `vUSD`) `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD`, issuer `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26`, demo campaign id `0` (2 vUSD per visit, 100 vUSD budget, 50 claims max).
-| `close_campaign` | `TODO: <explorer link>` |
+Deployed on Stellar Testnet: token (SAC of `vUSD`) `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD`, issuer `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26`, demo campaign id `0` (2 vUSD per visit, 100 vUSD budget, 50 claims max). Contract [deploy tx](https://stellar.expert/explorer/testnet/tx/d6032e522576e42e8c2fdb20a6f35771d9bcb15230f277925b6ff85715404bb3).
 
 ## Automated end-to-end check (testnet)
 
@@ -190,4 +190,4 @@ None. Everything in this repository was built during HackMeridian; see the dated
 
 ## License
 
-Licensed under the [Apache License 2.0](LICENSE). Copyright 2026 codingsh. See [NOTICE](NOTICE).
+[Apache-2.0](LICENSE). Copyright 2026 codingsh, see [NOTICE](NOTICE).

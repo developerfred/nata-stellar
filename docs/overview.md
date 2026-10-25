@@ -32,4 +32,4 @@ docs/                 This documentation
 ## Status
 
 Testnet only. Out of scope: mainnet, anchor cash-out, GPS geofencing, strong anti-sybil proofs, a security audit.
-Still to fill by the team: live URL, demo video URL, `close_campaign` transaction link (see [SUBMISSION.md](SUBMISSION.md)).
+Still to fill by the team: live URL and demo video URL (see [SUBMISSION.md](SUBMISSION.md)).
