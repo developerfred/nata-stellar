@@ -5,7 +5,8 @@ import { useCallback, useEffect, useState } from "react";
 import type { Keypair } from "@stellar/stellar-sdk";
 import { createCampaignArgs, getBalance, invokeAndWait } from "@/lib/chain";
 import { config } from "@/lib/config";
-import { explainError } from "@/lib/errors";
+import { KeyedError } from "@/lib/errors";
+import { useExplain, useT } from "@/lib/i18n";
 import { formatAmount, parseAmount, short } from "@/lib/format";
 import { createMerchantKey, fundWithFriendbot, importMerchantKey, loadMerchantKey } from "@/lib/merchant";
 import { encodePlace, type MenuItem } from "@/lib/place";
@@ -24,6 +25,8 @@ function parseMenu(text: string): MenuItem[] {
 }
 
 export function MerchantConsole() {
+  const t = useT();
+  const explain = useExplain();
   const [key, setKey] = useState<Keypair | null>(null);
   const [ready, setReady] = useState(false);
   const [balance, setBalance] = useState<bigint | null>(null);
@@ -70,7 +73,7 @@ export function MerchantConsole() {
     try {
       await fn();
     } catch (e) {
-      setError(explainError(e));
+      setError(explain(e));
     } finally {
       setBusy(false);
     }
@@ -81,13 +84,13 @@ export function MerchantConsole() {
   if (!key) {
     return (
       <section className="card grid gap-3">
-        <h2 className="text-lg font-bold">Set up your counter</h2>
+        <h2 className="text-lg font-bold">{t("merchant.setup")}</h2>
         <p className="text-sm text-muted">
-          This device holds the key that signs the QR codes at your counter. It never leaves this browser.
+          {t("merchant.setupHint")}
         </p>
-        <button className="btn" onClick={() => setKey(createMerchantKey())}>Create counter key</button>
+        <button className="btn" onClick={() => setKey(createMerchantKey())}>{t("merchant.createKey")}</button>
         <details className="text-sm">
-          <summary className="cursor-pointer text-muted">Use an existing secret key</summary>
+          <summary className="cursor-pointer text-muted">{t("merchant.importKey")}</summary>
           <form
             className="mt-2 flex gap-2"
             onSubmit={(e) => {
@@ -97,7 +100,7 @@ export function MerchantConsole() {
             }}
           >
             <input name="secret" className="input" placeholder="S…" autoComplete="off" />
-            <button className="btn btn-ghost">Import</button>
+            <button className="btn btn-ghost">{t("merchant.import")}</button>
           </form>
         </details>
         {error && <p role="alert" className="text-sm text-burnt">{error}</p>}
@@ -110,9 +113,9 @@ export function MerchantConsole() {
     if (!key) return;
     await guard(async () => {
       if (!config.campaignsContractId || !config.tokenContractId) {
-        throw new Error("This deployment has no contract configured yet.");
+        throw new KeyedError("merchant.noContract");
       }
-      setStatus("Locking your budget in the contract…");
+      setStatus(t("merchant.locking"));
       const now = Math.floor(Date.now() / 1000);
       const rewardRaw = parseAmount(reward);
       const budgetRaw = parseAmount(budget);
@@ -141,7 +144,7 @@ export function MerchantConsole() {
           metaUri,
         }),
       );
-      setStatus(`Campaign created. Transaction ${hash.slice(0, 8)}…`);
+      setStatus(t("merchant.created", { hash: hash.slice(0, 8) }));
       await reload(key);
     });
   }
@@ -159,27 +162,27 @@ export function MerchantConsole() {
   return (
     <div className="grid gap-6">
       <section className="card grid gap-2">
-        <p className="label">Merchant account</p>
+        <p className="label">{t("merchant.account")}</p>
         <a className="font-mono text-sm underline" href={`${config.explorerUrl}/account/${key.publicKey()}`} target="_blank" rel="noreferrer">
           {short(key.publicKey())}
         </a>
         <p className="text-sm">
-          Balance: <b>{balance === null ? "…" : formatAmount(balance)} {config.tokenSymbol}</b>
+          {t("merchant.balance")} <b>{balance === null ? "…" : formatAmount(balance)} {config.tokenSymbol}</b>
         </p>
         <div className="flex gap-2">
           <button
             className="btn btn-ghost !min-h-10 text-sm"
             disabled={busy}
-            onClick={() => guard(async () => { await fundWithFriendbot(key.publicKey()); setStatus("Account funded with test XLM."); })}
+            onClick={() => guard(async () => { await fundWithFriendbot(key.publicKey()); setStatus(t("merchant.funded")); })}
           >
-            Fund with test XLM
+            {t("merchant.fund")}
           </button>
         </div>
       </section>
 
       {mine.length > 0 && (
         <section className="grid gap-3">
-          <h2 className="text-xl font-bold">Your campaigns</h2>
+          <h2 className="text-xl font-bold">{t("merchant.campaigns")}</h2>
           {mine.map((c) => {
             const reward = BigInt(c.rewardRaw);
             const spent = reward * BigInt(c.claims);
@@ -188,22 +191,22 @@ export function MerchantConsole() {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <h3 className="font-bold">{c.place.name}</h3>
-                    <p className="text-sm text-muted">{c.active ? "Live" : "Closed"} · #{c.id}</p>
+                    <p className="text-sm text-muted">{c.active ? t("merchant.live") : t("merchant.closed")} · #{c.id}</p>
                   </div>
-                  <Link href={`/place/${c.id}`} className="text-sm underline">Public page</Link>
+                  <Link href={`/place/${c.id}`} className="text-sm underline">{t("merchant.publicPage")}</Link>
                 </div>
                 <dl className="grid grid-cols-3 gap-2 text-center">
-                  <div><dt className="label">Visits</dt><dd className="text-2xl font-extrabold">{c.claims}</dd></div>
-                  <div><dt className="label">Cost / visit</dt><dd className="text-2xl font-extrabold">{formatAmount(reward)}</dd></div>
-                  <div><dt className="label">Left</dt><dd className="text-2xl font-extrabold">{formatAmount(BigInt(c.remainingRaw))}</dd></div>
+                  <div><dt className="label">{t("merchant.visits")}</dt><dd className="text-2xl font-extrabold">{c.claims}</dd></div>
+                  <div><dt className="label">{t("merchant.cost")}</dt><dd className="text-2xl font-extrabold">{formatAmount(reward)}</dd></div>
+                  <div><dt className="label">{t("merchant.leftLabel")}</dt><dd className="text-2xl font-extrabold">{formatAmount(BigInt(c.remainingRaw))}</dd></div>
                 </dl>
-                <p className="text-xs text-muted">Spent {formatAmount(spent)} {config.tokenSymbol} for {c.claims} verified visits.</p>
+                <p className="text-xs text-muted">{t("merchant.spent", { amount: formatAmount(spent), symbol: config.tokenSymbol, n: c.claims })}</p>
                 <div className="flex gap-2">
                   {c.active && (
-                    <Link href={`/merchant/counter?c=${c.id}`} className="btn flex-1">Counter mode</Link>
+                    <Link href={`/merchant/counter?c=${c.id}`} className="btn flex-1">{t("merchant.counterMode")}</Link>
                   )}
                   {c.active && (
-                    <button className="btn btn-ghost" disabled={busy} onClick={() => close(c.id)}>Close &amp; refund</button>
+                    <button className="btn btn-ghost" disabled={busy} onClick={() => close(c.id)}>{t("merchant.close")}</button>
                   )}
                 </div>
               </div>
@@ -213,25 +216,26 @@ export function MerchantConsole() {
       )}
 
       <form onSubmit={create} className="card grid gap-4">
-        <h2 className="text-xl font-bold">New campaign</h2>
-        <div><label className="label" htmlFor="name">Place name</label><input id="name" className="input" required maxLength={60} value={name} onChange={(e) => setName(e.target.value)} /></div>
+        <h2 className="text-xl font-bold">{t("merchant.new")}</h2>
+        <Link href="/faucet" className="text-sm underline">{t("faucet.link")}</Link>
+        <div><label className="label" htmlFor="name">{t("merchant.name")}</label><input id="name" className="input" required maxLength={60} value={name} onChange={(e) => setName(e.target.value)} /></div>
         <div className="grid grid-cols-2 gap-3">
-          <div><label className="label" htmlFor="kind">Type</label><input id="kind" className="input" required maxLength={30} value={kind} onChange={(e) => setKind(e.target.value)} /></div>
-          <div><label className="label" htmlFor="addr">Address</label><input id="addr" className="input" required maxLength={80} value={address} onChange={(e) => setAddress(e.target.value)} /></div>
+          <div><label className="label" htmlFor="kind">{t("merchant.type")}</label><input id="kind" className="input" required maxLength={30} value={kind} onChange={(e) => setKind(e.target.value)} /></div>
+          <div><label className="label" htmlFor="addr">{t("merchant.address")}</label><input id="addr" className="input" required maxLength={80} value={address} onChange={(e) => setAddress(e.target.value)} /></div>
         </div>
-        <div><label className="label" htmlFor="blurb">Short description</label><input id="blurb" className="input" maxLength={120} value={blurb} onChange={(e) => setBlurb(e.target.value)} /></div>
-        <div><label className="label" htmlFor="promo">Promotion</label><input id="promo" className="input" maxLength={120} value={promo} onChange={(e) => setPromo(e.target.value)} placeholder="Visit us and get paid" /></div>
-        <div><label className="label" htmlFor="photo">Photo URL (https, optional)</label><input id="photo" className="input" type="url" value={photo} onChange={(e) => setPhoto(e.target.value)} /></div>
+        <div><label className="label" htmlFor="blurb">{t("merchant.blurb")}</label><input id="blurb" className="input" maxLength={120} value={blurb} onChange={(e) => setBlurb(e.target.value)} /></div>
+        <div><label className="label" htmlFor="promo">{t("merchant.promo")}</label><input id="promo" className="input" maxLength={120} value={promo} onChange={(e) => setPromo(e.target.value)} placeholder={t("merchant.promoPh")} /></div>
+        <div><label className="label" htmlFor="photo">{t("merchant.photo")}</label><input id="photo" className="input" type="url" value={photo} onChange={(e) => setPhoto(e.target.value)} /></div>
         <div>
-          <label className="label" htmlFor="menu">Menu, one item per line: name | price | note</label>
-          <textarea id="menu" className="input !min-h-28" value={menu} onChange={(e) => setMenu(e.target.value)} placeholder={"Pastel de nata | €1.30 | Fresh from the oven\nGalão | €2.20"} />
+          <label className="label" htmlFor="menu">{t("merchant.menu")}</label>
+          <textarea id="menu" className="input !min-h-28" value={menu} onChange={(e) => setMenu(e.target.value)} placeholder={t("merchant.menuPh")} />
         </div>
         <div className="grid grid-cols-3 gap-3">
-          <div><label className="label" htmlFor="reward">Reward / visit</label><input id="reward" className="input" inputMode="decimal" required value={reward} onChange={(e) => setReward(e.target.value)} /></div>
-          <div><label className="label" htmlFor="budget">Budget</label><input id="budget" className="input" inputMode="decimal" required value={budget} onChange={(e) => setBudget(e.target.value)} /></div>
-          <div><label className="label" htmlFor="days">Days</label><input id="days" className="input" inputMode="numeric" required value={days} onChange={(e) => setDays(e.target.value)} /></div>
+          <div><label className="label" htmlFor="reward">{t("merchant.reward")}</label><input id="reward" className="input" inputMode="decimal" required value={reward} onChange={(e) => setReward(e.target.value)} /></div>
+          <div><label className="label" htmlFor="budget">{t("merchant.budget")}</label><input id="budget" className="input" inputMode="decimal" required value={budget} onChange={(e) => setBudget(e.target.value)} /></div>
+          <div><label className="label" htmlFor="days">{t("merchant.days")}</label><input id="days" className="input" inputMode="numeric" required value={days} onChange={(e) => setDays(e.target.value)} /></div>
         </div>
-        <button className="btn" disabled={busy}>{busy ? "Working…" : `Lock ${budget || 0} ${config.tokenSymbol} and launch`}</button>
+        <button className="btn" disabled={busy}>{busy ? t("merchant.working") : t("merchant.launch", { budget: budget || 0, symbol: config.tokenSymbol })}</button>
         {status && <p className="text-sm text-ok">{status}</p>}
         {error && <p role="alert" className="text-sm text-burnt">{error}</p>}
       </form>

@@ -1,5 +1,5 @@
 import "server-only";
-import { Keypair, Transaction } from "@stellar/stellar-sdk";
+import { FeeBumpTransaction, Keypair, Transaction } from "@stellar/stellar-sdk";
 import { PasskeyServer } from "passkey-kit/server";
 import { config } from "../config";
 import { rpcServer } from "../chain";
@@ -61,4 +61,19 @@ async function submitWithSponsor(tx: Transaction): Promise<Submitted> {
     await new Promise((res) => setTimeout(res, 1000));
   }
   return { hash: sent.hash, status: "PENDING" };
+}
+
+/** Sends an already signed transaction (e.g. a fee bump) and waits within the confirmation budget. */
+export async function sendAndWait(tx: Transaction | FeeBumpTransaction): Promise<string> {
+  const rpc = rpcServer();
+  const sent = await rpc.sendTransaction(tx);
+  if (sent.status === "ERROR") throw new Error("Transaction rejected by the network");
+  const deadline = Date.now() + CONFIRM_BUDGET_MS;
+  while (Date.now() < deadline) {
+    const r = await rpc.getTransaction(sent.hash);
+    if (r.status === "SUCCESS") return sent.hash;
+    if (r.status === "FAILED") throw new Error("Transaction failed on-chain");
+    await new Promise((res) => setTimeout(res, 1000));
+  }
+  throw new Error("Timed out waiting for confirmation");
 }

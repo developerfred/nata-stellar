@@ -1,8 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { useExplain } from "@/lib/i18n";
 import {
   connectPasskeyWallet,
+  ensureTrustline,
   createLocalWallet,
   createPasskeyWallet,
   forgetWallet,
@@ -15,6 +17,7 @@ export function useWallet() {
   const [wallet, setWallet] = useState<WalletInfo | null>(null);
   const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
+  const explain = useExplain();
   const [error, setError] = useState<string | null>(null);
   const [balance, setBalance] = useState<bigint | null>(null);
   const [passkeys, setPasskeys] = useState(false);
@@ -43,13 +46,15 @@ export function useWallet() {
     setBusy(true);
     setError(null);
     try {
-      setWallet(await fn());
+      const w = await fn();
+      await ensureTrustline(w).catch(() => undefined); // retried before the first claim
+      setWallet(w);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
+      setError(explain(e));
     } finally {
       setBusy(false);
     }
-  }, []);
+  }, [explain]);
 
   return {
     wallet,

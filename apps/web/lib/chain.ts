@@ -2,6 +2,7 @@ import { Buffer } from "buffer";
 import {
   Account,
   Address,
+  Asset,
   BASE_FEE,
   Contract,
   Keypair,
@@ -154,3 +155,16 @@ export const createCampaignArgs = (p: {
   nativeToScVal(Buffer.from(p.signerPubkey), { type: "bytes" }),
   nativeToScVal(p.metaUri, { type: "string" }),
 ];
+
+/** True when a classic account holds a trustline for the reward asset (always true when no issuer is configured). */
+export async function hasTrustline(account: string): Promise<boolean> {
+  if (!config.tokenIssuer) return true;
+  const key = xdr.LedgerKey.trustline(
+    new xdr.LedgerKeyTrustLine({
+      accountId: Keypair.fromPublicKey(account).xdrAccountId(),
+      asset: new Asset(config.tokenSymbol, config.tokenIssuer).toTrustLineXDRObject(),
+    }),
+  );
+  const res = await rpcServer().getLedgerEntries(key);
+  return res.entries.length > 0;
+}

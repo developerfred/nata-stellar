@@ -4,8 +4,11 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { config } from "@/lib/config";
+import { KeyedError } from "@/lib/errors";
 import { formatAmount } from "@/lib/format";
+import { useExplain, useT } from "@/lib/i18n";
 import { decodeTicket } from "@/lib/ticket";
+import { ensureTrustline } from "@/lib/wallet";
 import { WalletCard } from "./WalletCard";
 import { useWallet } from "./useWallet";
 
@@ -22,29 +25,32 @@ async function waitForConfirmation(hash: string) {
     const res = await fetch(`/api/claim/status?hash=${encodeURIComponent(hash)}`);
     const json = await res.json().catch(() => ({}));
     if (json.status === "SUCCESS") return;
-    if (json.status === "FAILED") throw new Error("The claim failed on-chain. Scan a fresh code and try again.");
+    if (json.status === "FAILED") throw new KeyedError("err.claimOnchain");
   }
-  throw new Error("Still confirming. Check the transaction on the explorer before scanning again.");
+  throw new KeyedError("err.stillConfirming");
 }
 
 export function ClaimFlow() {
   const params = useSearchParams();
   const w = useWallet();
+  const t = useT();
+  const explain = useExplain();
   const [state, setState] = useState<State>({ kind: "idle" });
   const started = useRef(false);
 
-  let ticketError: string | null = null;
+  let ticketError = false;
   let ticket: ReturnType<typeof decodeTicket> | null = null;
   try {
     ticket = decodeTicket(new URLSearchParams(params.toString()));
   } catch {
-    ticketError = "This link is not a valid counter code. Scan the QR at the counter again.";
+    ticketError = true;
   }
 
   async function claim() {
     if (!ticket || !w.wallet) return;
     setState({ kind: "sending" });
     try {
+      await ensureTrustline(w.wallet); // device wallets opt in to the reward token first; sponsored, no XLM
       const res = await fetch("/api/claim", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -57,7 +63,7 @@ export function ClaimFlow() {
         }),
       });
       const json = await res.json();
-      if (!res.ok && res.status !== 202) throw new Error(json.error ?? "Claim failed");
+      if (!res.ok && res.status !== 202) throw Object.assign(new Error(json.error ?? ""), { code: json.code });
       if (json.pending) await waitForConfirmation(json.hash);
       let reward: string | null = null;
       try {
@@ -69,7 +75,7 @@ export function ClaimFlow() {
       setState({ kind: "done", hash: json.hash, explorer: json.explorer, reward });
       void w.refresh();
     } catch (e) {
-      setState({ kind: "error", message: e instanceof Error ? e.message : "Claim failed" });
+      setState({ kind: "error", message: explain(e) });
     }
   }
 
@@ -85,8 +91,8 @@ export function ClaimFlow() {
   if (ticketError) {
     return (
       <div className="card">
-        <p role="alert">{ticketError}</p>
-        <Link href="/scan" className="btn mt-4">Scan again</Link>
+        <p role="alert">{t("claim.invalid")}</p>
+        <Link href="/scan" className="btn mt-4">{t("claim.scanAgain")}</Link>
       </div>
     );
   }
@@ -96,25 +102,25 @@ export function ClaimFlow() {
       {state.kind === "done" ? (
         <section className="card text-center">
           <p className="text-5xl font-extrabold text-ok">+{state.reward ?? ""} {config.tokenSymbol}</p>
-          <p className="mt-2 font-semibold">Visit confirmed. Enjoy!</p>
+          <p className="mt-2 font-semibold">{t("claim.confirmed")}</p>
           <a className="mt-3 inline-block text-sm underline" href={state.explorer} target="_blank" rel="noreferrer">
-            View the transaction on stellar.expert
+            {t("claim.viewTx")}
           </a>
         </section>
       ) : state.kind === "sending" ? (
         <section className="card text-center">
-          <p className="text-lg font-bold">Confirming your visit…</p>
-          <p className="mt-1 text-sm text-muted">This takes a few seconds.</p>
+          <p className="text-lg font-bold">{t("claim.sending")}</p>
+          <p className="mt-1 text-sm text-muted">{t("claim.seconds")}</p>
         </section>
       ) : state.kind === "error" ? (
         <section className="card">
           <p role="alert" className="font-semibold text-burnt">{state.message}</p>
-          <Link href="/scan" className="btn mt-4">Scan again</Link>
+          <Link href="/scan" className="btn mt-4">{t("claim.scanAgain")}</Link>
         </section>
       ) : !w.wallet && w.ready ? (
         <section className="card">
-          <p className="font-semibold">Create your wallet to collect this reward.</p>
-          <p className="mt-1 text-sm text-muted">Do it now: the counter code only lasts about 30 seconds.</p>
+          <p className="font-semibold">{t("claim.createFirst")}</p>
+          <p className="mt-1 text-sm text-muted">{t("claim.hurry")}</p>
         </section>
       ) : null}
       <WalletCard />

@@ -1,6 +1,8 @@
 import { NextResponse, connection } from "next/server";
 import { listCampaigns } from "@/lib/server/campaigns";
 
+export const maxDuration = 30;
+
 export async function GET() {
   await connection();
   try {

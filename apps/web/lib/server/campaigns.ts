@@ -34,19 +34,14 @@ const toView = (c: Campaign): PlaceCampaign | null => {
   };
 };
 
-let cache: { at: number; data: PlaceCampaign[] } | null = null;
-
-/** Lists campaigns from the contract; cached briefly so the home page stays fast under load. */
+/** Lists campaigns straight from the contract; no process-local cache, so every serverless instance agrees. */
 export async function listCampaigns(): Promise<PlaceCampaign[]> {
   if (!config.campaignsContractId) return [];
   await connection();
-  if (cache && Date.now() - cache.at < 10_000) return cache.data;
   const count = await getCampaignCount();
-  const ids = Array.from({ length: Math.min(count, 100) }, (_, i) => BigInt(count - 1 - i));
+  const ids = Array.from({ length: Math.min(count, 50) }, (_, i) => BigInt(count - 1 - i));
   const all = await Promise.all(ids.map((id) => getCampaign(id).catch(() => null)));
-  const data = all.flatMap((c) => (c ? [toView(c)] : [])).filter((v): v is PlaceCampaign => v !== null);
-  cache = { at: Date.now(), data };
-  return data;
+  return all.flatMap((c) => (c ? [toView(c)] : [])).filter((v): v is PlaceCampaign => v !== null);
 }
 
 export async function loadCampaign(id: bigint): Promise<PlaceCampaign | null> {
