@@ -11,11 +11,20 @@ out/
 *.tsbuildinfo
 next-env.d.ts
 
-# Env
+# Env and secrets (only the .example files are tracked)
 .env
-.env.local
-.env.*.local
+.env.*
 !.env.example
+!**/.env.example
+stellar-config/
+identity/
+*.secret
+*.pem
+*.key
+
+# Logs and bundles
+*.log
+*.bundle
 
 # OS / editors
 .DS_Store
