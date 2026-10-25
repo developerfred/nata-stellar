@@ -10,7 +10,7 @@
 | Demo video | `TODO: <video URL>` |
 | Pitch deck | [docs/nata-pitch-deck.pptx](docs/nata-pitch-deck.pptx) |
 | Architecture | [ARCHITECTURE.md](ARCHITECTURE.md) |
-| Campaigns contract (testnet) | `TODO: C…` |
+| Campaigns contract (testnet) | [`CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV`](https://stellar.expert/explorer/testnet/contract/CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV) |
 
 ## The problem
 
@@ -76,7 +76,8 @@ pnpm dev                       # http://localhost:3000
 | `NEXT_PUBLIC_STELLAR_NETWORK_PASSPHRASE` | client | Network passphrase | `Test SDF Network ; September 2015` |
 | `NEXT_PUBLIC_CAMPAIGNS_CONTRACT_ID` | client | Deployed `campaigns` contract (`C…`) | none, required |
 | `NEXT_PUBLIC_EXPLORER_URL` | client | Explorer base URL for transaction links | `https://stellar.expert/explorer/testnet` |
-| `NEXT_PUBLIC_USDC_CONTRACT_ID` | client | Token (SAC) used for budgets and rewards | `TODO` |
+| `NEXT_PUBLIC_TOKEN_CONTRACT_ID` | client | Token (SAC) used for budgets and rewards | none, required |
+| `NEXT_PUBLIC_TOKEN_SYMBOL` | client | Token symbol shown in the UI | `USDC` |
 | `RELAYER_URL` | server | Fee-sponsoring relayer base URL | `TODO` |
 | `RELAYER_API_KEY` | server | Relayer API key. Never exposed to the browser | `TODO` |
 | `SPONSOR_SECRET` | server | Fallback sponsor account (`S…`) if the relayer is unavailable | `TODO` |
@@ -105,9 +106,11 @@ pnpm dev                       # http://localhost:3000
 
 | Action | Transaction |
 |---|---|
-| `create_campaign` | `TODO: <explorer link>` |
-| `claim` (accepted) | `TODO: <explorer link>` |
-| `claim` (refused: reused nonce / second visit) | `TODO: <explorer link>` |
+| `create_campaign` | [a8746e3a…2fec](https://stellar.expert/explorer/testnet/tx/a8746e3a8524e9a92dc0ab21d0ce11f04d4c5ff48ea7b85a366817fc95322fec) |
+| `claim` (accepted, 2 vUSD) | [82f51bda…b46e](https://stellar.expert/explorer/testnet/tx/82f51bda8bd34273881e0eb55c1b0c9316e0232bd8f963a44d76e472e327b46e) |
+| `claim` (refused: reused QR, second visit) | No transaction. The server simulates first and returns `This QR code was already used` / `You already collected this reward.` before any fee is spent |
+
+Deployed on Stellar Testnet: token (SAC of `vUSD`) `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD`, issuer `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26`, demo campaign id `0` (2 vUSD per visit, 100 vUSD budget, 50 claims max).
 | `close_campaign` | `TODO: <explorer link>` |
 
 ## Security model
