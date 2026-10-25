@@ -13,12 +13,12 @@ Readiness notes only. No app code changes are needed to deploy, but the open ris
 
 | Risk | Detail | Mitigation |
 |---|---|---|
-| In-memory rate limit | `lib/server/ratelimit.ts` is per instance, so limits are not shared across serverless instances | Acceptable for the demo (the contract enforces the real rules: nonce, one claim per wallet, `max_claims`). Swap for Vercel KV / Upstash if abused |
+| Rate limit across instances | **Fixed.** `lib/server/ratelimit.ts` uses Upstash Redis / Vercel KV (REST) when `UPSTASH_REDIS_REST_URL`+`_TOKEN` or `KV_REST_API_URL`+`_TOKEN` are set, and falls back to an in-memory window otherwise or if the store is down | Add a free Upstash database from the Vercel marketplace before sharing the link. The contract still enforces the real rules |
 | Sponsor balance | `SPONSOR_SECRET` pays fees for every tester | Fund it with plenty of testnet XLM via friendbot before sharing the link |
-| Function timeout | `/api/claim` simulates and waits for confirmation, which can approach the 10 s Hobby limit | Retry on the client if it times out; the contract rejects a replayed nonce, so a retry cannot double pay |
+| Function timeout | **Fixed.** `/api/claim` waits at most `CONFIRM_BUDGET_MS` (20 s), then returns 202 with the hash and the client polls `/api/claim/status`. `maxDuration` is 60 s | None needed. A retry cannot double pay (the contract rejects a replayed nonce) |
 | Token trustline | A local `G…` visitor wallet needs a `vUSD` trustline before receiving the SAC reward. A `C…` passkey wallet does not. The web app has no automatic `changeTrust` step | Verify a fresh browser wallet can claim before publishing. If not, add a sponsored trustline step or use a passkey wallet (needs the relayer) |
 | Keys in the browser | Visitor and merchant keys live in `localStorage` | Clearing site data loses the account. Testnet only, noted in the README |
-| Relayer path | The OpenZeppelin relayer path has not been exercised | Use the `SPONSOR_SECRET` fallback for the demo |
+| Relayer path | **Hardened.** `RELAYER_URL` and `RELAYER_API_KEY` are validated together, the relayer gets `RELAYER_TIMEOUT_MS` (12 s), and on error or timeout the claim falls back to `SPONSOR_SECRET`. Covered by `pnpm test`. Not yet exercised against a live relayer | Set both `SPONSOR_SECRET` and the relayer vars so a relayer outage does not block claims |
 
 ## Smoke test after deploy
 
