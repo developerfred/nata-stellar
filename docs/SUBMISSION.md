@@ -10,7 +10,7 @@ Deadline: Mon Oct 26, 12:00 (Lisbon).
 - [x] Testnet evidence for `create_campaign` and an accepted `claim` (README)
 - [x] Refused claims: reused QR, second visit and forged signature are checked by `scripts/e2e-testnet.sh` (rejected at simulation, so no transaction exists)
 - [x] Prior work: none, everything built during the event (see commit dates)
-- [x] Pitch deck: `docs/nata-pitch-deck.pptx`
+- [x] Pitch deck: `docs/nata-pitch-deck-hackmeridian.pptx`
 - [x] Vercel readiness notes: `docs/VERCEL.md`
 
 ## Blockers that need the founder
