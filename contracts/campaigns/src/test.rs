@@ -231,3 +231,27 @@ fn invalid_params_are_rejected() {
     );
     assert_eq!(res, Err(Ok(err(Error::InvalidParams))));
 }
+
+/// Reference vector produced by `apps/web/lib/ticket.vectors.mjs`; keeps the
+/// merchant-device encoding and the contract in lockstep.
+#[test]
+fn ticket_payload_matches_web_encoding() {
+    let env = Env::default();
+    let contract = Address::from_str(
+        &env,
+        "CAAQCAIBAEAQCAIBAEAQCAIBAEAQCAIBAEAQCAIBAEAQCAIBAEAQC526",
+    );
+    let id = env.register_at(&contract, Campaigns, ());
+    let client = CampaignsClient::new(&env, &id);
+
+    let nonce = BytesN::from_array(&env, &[5u8; 32]);
+    let payload = client.ticket_payload(&42, &nonce, &1_793_000_020);
+
+    let mut buf = std::vec![0u8; payload.len() as usize];
+    payload.copy_into_slice(&mut buf);
+    let hex: std::string::String = buf.iter().map(|b| std::format!("{b:02x}")).collect();
+    assert_eq!(
+        hex,
+        "6e6174612d636c61696d2d763100000012000000010101010101010101010101010101010101010101010101010101010101010101000000000000002a0505050505050505050505050505050505050505050505050505050505050505000000006adf0254"
+    );
+}
