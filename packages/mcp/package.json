@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "MCP server that lets AI agents create and manage nata campaigns on Stellar testnet",
   "private": true,
+  "license": "Apache-2.0",
   "type": "module",
   "bin": { "nata-mcp": "dist/index.js" },
   "scripts": {

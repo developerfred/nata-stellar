@@ -190,4 +190,4 @@ None. Everything in this repository was built during HackMeridian; see the dated
 
 ## License
 
-`TODO: choose a license`
+Licensed under the [Apache License 2.0](LICENSE). Copyright 2026 codingsh. See [NOTICE](NOTICE).
