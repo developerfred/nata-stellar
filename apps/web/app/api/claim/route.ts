@@ -7,6 +7,7 @@ import { allow } from "@/lib/server/ratelimit";
 import { relayerConfigured, sponsorKeypair, sponsorConfigured, submitSponsored } from "@/lib/server/submit";
 import { fromHex } from "@/lib/ticket";
 
+// Fluid compute / Pro allow more; Hobby caps at 60 s. The confirm budget (20 s) stays well under it.
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
@@ -55,8 +56,12 @@ export async function POST(req: Request) {
       .build();
     // Simulating first turns every contract rule (expired, replay, 2nd visit...) into a clear error before any fee is spent.
     const prepared = await server.prepareTransaction(built);
-    const hash = await submitSponsored(prepared);
-    return NextResponse.json({ hash, explorer: `${config.explorerUrl}/tx/${hash}` });
+    const { hash, status } = await submitSponsored(prepared);
+    // 202 = submitted but not yet confirmed; the client polls /api/claim/status?hash=...
+    return NextResponse.json(
+      { hash, pending: status === "PENDING", explorer: `${config.explorerUrl}/tx/${hash}` },
+      { status: status === "PENDING" ? 202 : 200 },
+    );
   } catch (err) {
     const { code, text } = describeError(err);
     return NextResponse.json({ error: text, code }, { status: 422 });

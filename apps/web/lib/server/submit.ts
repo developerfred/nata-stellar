@@ -3,8 +3,10 @@ import { FeeBumpTransaction, Keypair, Transaction } from "@stellar/stellar-sdk";
 import { PasskeyServer } from "passkey-kit/server";
 import { config } from "../config";
 import { rpcServer } from "../chain";
+import { parseRelayer, submitWithFallback } from "./fallback";
 
-export const relayerConfigured = () => Boolean(process.env.RELAYER_URL && process.env.RELAYER_API_KEY);
+export const relayerSettings = () => parseRelayer(process.env);
+export const relayerConfigured = () => relayerSettings() !== null;
 export const sponsorConfigured = () => Boolean(process.env.SPONSOR_SECRET);
 
 export function sponsorKeypair(): Keypair {
@@ -13,31 +15,61 @@ export function sponsorKeypair(): Keypair {
   return Keypair.fromSecret(secret);
 }
 
+export type Submitted = { hash: string; status: "SUCCESS" | "PENDING" };
+
+/** Time spent waiting for confirmation before handing back a pending hash (stays under serverless limits). */
+const CONFIRM_BUDGET_MS = Number(process.env.CONFIRM_BUDGET_MS ?? 20_000);
+const RELAYER_TIMEOUT_MS = Number(process.env.RELAYER_TIMEOUT_MS ?? 12_000);
+
 /**
- * Submits a transaction without ever exposing credentials to the browser:
- * OpenZeppelin Relayer Channels when configured, otherwise a signed-in-place sponsor account.
+ * Submits a transaction without ever exposing credentials to the browser: OpenZeppelin Relayer
+ * when configured, falling back to the sponsor account (SPONSOR_SECRET) if the relayer fails or
+ * is slow. If the network has not confirmed within the budget the hash is returned as PENDING
+ * and the client polls /api/claim/status.
  */
-export async function submitSponsored(tx: Transaction): Promise<string> {
-  if (relayerConfigured()) {
-    const server = new PasskeyServer({
-      networkPassphrase: config.networkPassphrase,
-      rpcUrl: config.rpcUrl,
-      relayer: { baseUrl: process.env.RELAYER_URL!, apiKey: process.env.RELAYER_API_KEY! },
-    });
-    const res = await server.send(tx);
-    if (!res.success) throw new Error(res.error.message || "Relayer rejected the transaction");
-    return res.hash;
-  }
-  tx.sign(sponsorKeypair());
-  return sendAndWait(tx);
+export async function submitSponsored(tx: Transaction): Promise<Submitted> {
+  const relayer = relayerSettings();
+  return submitWithFallback<Submitted>({
+    relayer: relayer
+      ? async () => {
+          const server = new PasskeyServer({
+            networkPassphrase: config.networkPassphrase,
+            rpcUrl: config.rpcUrl,
+            relayer: { baseUrl: relayer.baseUrl, apiKey: relayer.apiKey },
+          });
+          const res = await server.send(tx);
+          if (!res.success) throw new Error(res.error.message || "Relayer rejected the transaction");
+          return { hash: res.hash, status: "SUCCESS" };
+        }
+      : null,
+    sponsor: sponsorConfigured() ? () => submitWithSponsor(tx) : null,
+    relayerTimeoutMs: RELAYER_TIMEOUT_MS,
+    onFallback: (reason) => console.warn("relayer failed, falling back to sponsor:", reason),
+  });
 }
 
-/** Sends an already signed transaction and polls until it lands (bounded, well under the function timeout). */
+async function submitWithSponsor(tx: Transaction): Promise<Submitted> {
+  const rpc = rpcServer();
+  tx.sign(sponsorKeypair());
+  const sent = await rpc.sendTransaction(tx);
+  if (sent.status === "ERROR") throw new Error("Transaction rejected by the network");
+  const deadline = Date.now() + CONFIRM_BUDGET_MS;
+  while (Date.now() < deadline) {
+    const r = await rpc.getTransaction(sent.hash);
+    if (r.status === "SUCCESS") return { hash: sent.hash, status: "SUCCESS" };
+    if (r.status === "FAILED") throw new Error("Transaction failed on-chain");
+    await new Promise((res) => setTimeout(res, 1000));
+  }
+  return { hash: sent.hash, status: "PENDING" };
+}
+
+/** Sends an already signed transaction (e.g. a fee bump) and waits within the confirmation budget. */
 export async function sendAndWait(tx: Transaction | FeeBumpTransaction): Promise<string> {
   const rpc = rpcServer();
   const sent = await rpc.sendTransaction(tx);
   if (sent.status === "ERROR") throw new Error("Transaction rejected by the network");
-  for (let i = 0; i < 30; i++) {
+  const deadline = Date.now() + CONFIRM_BUDGET_MS;
+  while (Date.now() < deadline) {
     const r = await rpc.getTransaction(sent.hash);
     if (r.status === "SUCCESS") return sent.hash;
     if (r.status === "FAILED") throw new Error("Transaction failed on-chain");
