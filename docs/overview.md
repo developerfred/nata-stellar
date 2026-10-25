@@ -22,7 +22,7 @@ AI agents can run steps 1 and 5 through the MCP server (see [mcp-and-skill.md](m
 
 ```
 contracts/campaigns   Soroban escrow and proof-of-visit contract (Rust)
-apps/web              Visitor PWA, merchant dashboard, faucet, API routes, /docs (Next.js)
+apps/web              Visitor PWA, merchant dashboard, vUSD faucet, x402 paid endpoint, API routes, /docs (Next.js)
 packages/mcp          MCP server for agents (TypeScript, stdio)
 skills/nata           Claude skill that teaches an agent to use the MCP server
 scripts/              e2e-testnet.sh and sign-ticket.mjs

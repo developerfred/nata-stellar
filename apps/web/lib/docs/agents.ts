@@ -1,4 +1,4 @@
-import { ENDPOINTS, ENV_VARS, EXAMPLE, FACTS, INSTALL_CMD, SECTIONS, TOOLS, TOOL_DESC, UI } from "./content";
+import { DEPLOY_ENV, ENDPOINTS, ENV_VARS, EXAMPLE, FACTS, INSTALL_CMD, SECTIONS, TOOLS, TOOL_DESC, UI } from "./content";
 
 /** Optional absolute origin; links stay relative when unset. Public value, no secrets. */
 export const SITE = (process.env.NEXT_PUBLIC_SITE_URL ?? "").replace(/\/$/, "");
@@ -15,11 +15,18 @@ export function llmsTxt(): string {
 - [Agent guide (full)](${SITE}/llms-full.txt): MCP install, tools, safety limits, examples
 - [Agent guide (markdown)](${SITE}/docs/agents.md): same content
 - [MCP server config](${SITE}/.well-known/mcp.json): machine-readable install description
-- [Docs page (EN/PT/ES)](${SITE}/docs): human-readable version
+- [Docs page (EN/PT/ES)](${SITE}/docs): human-readable version, with faucet, x402, Vercel deploy and known limitations
+
+## API for agents (testnet)
+
+- POST ${SITE}/api/faucet: mint test vUSD to a G or C address (rate limited)
+- GET ${SITE}/api/x402/campaigns-premium: paid campaign analytics over x402 (HTTP 402, price 0.01 vUSD, off until configured)
+- GET ${SITE}/api/campaigns: free list of campaigns
 
 ## Source
 
 - [Repository](${FACTS.repo}): contract, web app, MCP server (packages/mcp), skill (skills/nata)
+- [x402 guide](${FACTS.repo}/blob/main/docs/X402.md)
 - [MCP and skill docs](${FACTS.repo}/blob/main/docs/mcp-and-skill.md)
 - [Architecture](${FACTS.repo}/blob/main/ARCHITECTURE.md)
 `;
@@ -27,7 +34,7 @@ export function llmsTxt(): string {
 
 export function agentsGuide(): string {
   const sec = (id: string) => SECTIONS.find((s) => s.id === id)!;
-  const text = (id: string) => sec(id).body[L].map((p) => (id === "safety" ? `- ${p}` : p)).join("\n");
+  const text = (id: string) => sec(id).body[L].map((p) => (id === "safety" || id === "limits" ? `- ${p}` : p)).join("\n");
   const tools = TOOLS.map((t) => `| \`${t.id}\` | ${t.inputs} | ${t.write ? "writes" : "read-only"}. ${TOOL_DESC[t.id][L]} |`).join("\n");
   const env = ENV_VARS.map((v) => `| \`${v.name}\` | ${v.note[L]} |`).join("\n");
   return `# nata agent guide
@@ -88,6 +95,28 @@ ${EXAMPLE}
 
 ${text("skill")}
 
+## ${sec("faucet").title[L]}
+
+${text("faucet")}
+
+## ${sec("x402").title[L]}
+
+${text("x402")}
+
+Full guide: ${FACTS.repo}/blob/main/docs/X402.md
+
+## ${sec("deploy").title[L]}
+
+${text("deploy")}
+
+\`\`\`bash
+${DEPLOY_ENV}
+\`\`\`
+
+## ${sec("limits").title[L]}
+
+${text("limits")}
+
 ## ${UI.endpoints[L]}
 
 ${ENDPOINTS.map((e) => `- ${SITE}${e.path} (${e.kind})`).join("\n")}
@@ -122,6 +151,11 @@ export function mcpManifest() {
     tools: TOOLS.map((t) => ({ name: t.id, inputs: t.inputs, readOnly: !t.write, description: TOOL_DESC[t.id][L] })),
     safety: sec_safety(),
     skill: `${FACTS.repo}/tree/main/skills/nata`,
+    http_endpoints: {
+      faucet: { method: "POST", path: `${SITE}/api/faucet`, body: { address: "G... or C..." }, note: "Mints test vUSD. Set NATA_FAUCET_URL to this URL for request_faucet. A G address needs the vUSD trustline first." },
+      x402: { method: "GET", path: `${SITE}/api/x402/campaigns-premium`, note: "HTTP 402 until paid with an x402 v2 client. Returns 503 when the deployment has no X402_PAY_TO.", docs: `${FACTS.repo}/blob/main/docs/X402.md` },
+    },
+    known_limitations: SECTIONS.find((s) => s.id === "limits")!.body[L],
   };
 }
 

@@ -1,6 +1,6 @@
 # nata
 
-**Pay-per-visit campaigns on Stellar.** Any place (restaurant, café, shop, event booth, museum) locks a USDC budget in a Soroban contract that **pays only when a real visit is proven at the counter**. Visitors get instant cashback in a passkey wallet: no seed phrase, no gas.
+**Pay-per-visit campaigns on Stellar.** Any place (restaurant, café, shop, event booth, museum) locks a stablecoin budget in a Soroban contract that **pays only when a real visit is proven at the counter**. Visitors get instant cashback in a wallet with no seed phrase and no gas. On testnet the token is the team-issued `vUSD` (a Stellar Asset Contract); Circle USDC is the intended swap-in. Passkey wallets are implemented but not deployed yet, so today visitors use a device wallet (see Known limitations).
 
 > Built during HackMeridian (Lisbon, Oct 25–26, 2026). Track: **Genesis** + **Stellar Composed**. Network: **Stellar Testnet**.
 
@@ -8,6 +8,7 @@
 |---|---|
 | Live app | `TODO: https://<deployment>.vercel.app` |
 | Demo video | `TODO: <video URL>` |
+| Docs | [docs/README.md](docs/README.md), the in-app `/docs` page (EN/PT/ES), `/llms.txt` |
 | Pitch deck | [docs/nata-pitch-deck-hackmeridian.pptx](docs/nata-pitch-deck-hackmeridian.pptx) |
 | Architecture | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | Campaigns contract (testnet) | [`CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV`](https://stellar.expert/explorer/testnet/contract/CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV) |
@@ -90,6 +91,14 @@ pnpm dev                       # http://localhost:3000
 
 > Set either the relayer pair or `SPONSOR_SECRET`. Never commit `.env.local`.
 
+## vUSD faucet
+
+`/faucet` (and `POST /api/faucet` with `{"address":"G…"}`) mints 100 test vUSD from the issuer key in the server-only `FAUCET_SECRET`. It is vUSD-specific: it only runs when `FAUCET_SECRET` is the secret of `NEXT_PUBLIC_TOKEN_ISSUER`, limits 3 per address and 10 per IP per UTC day (20000 vUSD per day in total), and on Vercel it refuses to run without the Upstash / Vercel KV store. A `G…` address needs the vUSD trustline first. `FAUCET_SECRET` can mint without limit: use a dedicated testnet issuer.
+
+## x402 paid endpoint
+
+`GET /api/x402/campaigns-premium` is an [x402](https://developers.stellar.org/docs/build/agentic-payments/x402) paywall on Stellar: `402` with the price, then the data after a signed vUSD payment (default 0.01). It stays off (503) until `X402_PAY_TO` is set. The end-to-end paid round trip with a live facilitator is not confirmed yet; see [docs/X402.md](docs/X402.md).
+
 ## MCP server for agents
 
 `packages/mcp` is an [MCP](https://modelcontextprotocol.io) server (stdio) that lets an AI agent create and manage nata campaigns on **testnet**: `list_active_campaigns`, `get_campaign`, `get_claims`, `create_campaign`, `close_campaign`, `get_agent_account` and `request_faucet`. It reuses the web app's contract client, so encoding stays in sync.
@@ -114,7 +123,7 @@ The skill in [`skills/nata`](skills/nata/SKILL.md) tells an agent when and how t
 ### Fastest path for judges (about 1 minute)
 
 1. Open the live app on your phone: `TODO: live URL`.
-2. Tap **Create wallet** and confirm with Face ID / Touch ID.
+2. Tap **Create wallet** (a device wallet today; passkey wallets need the factory that is not deployed yet), then get test vUSD from `/faucet`.
 3. Scan the campaign QR below (or on the pitch deck) with the in-app scanner.
 4. You receive the reward in a few seconds. Tap the link to see the transaction on stellar.expert.
 
@@ -175,6 +184,16 @@ Mainnet, bank cash-out via an anchor, GPS geofencing, strong anti-sybil proofs, 
 ## Prior work disclosure
 
 None. Everything in this repository was built during HackMeridian; see the dated commit history.
+
+## Known limitations
+
+- Passkey smart wallets: factory and WebAuthn verifier not deployed, `NEXT_PUBLIC_WALLET_WASM_HASH` is a TODO. Visitors use a device wallet kept in `localStorage`.
+- One token per deployment in the UI (the contract accepts a token per campaign). The faucet and trustline sponsorship are vUSD-specific.
+- x402: the paid round trip is not confirmed on chain yet. The relayer path is unit-tested only.
+- `FAUCET_SECRET` is the vUSD issuer key: dedicated testnet key, never reused.
+- Testnet only, no external audit.
+
+Open placeholders (live URL, video URL, demo QR) are tracked in [docs/SUBMISSION.md](docs/SUBMISSION.md).
 
 ## License
 

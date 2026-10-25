@@ -1,7 +1,7 @@
 "use client";
 
 import { useI18n } from "@/lib/i18n";
-import { ENDPOINTS, ENV_VARS, EXAMPLE, INSTALL_CMD, SECTIONS, TOOLS, TOOL_DESC, UI } from "@/lib/docs/content";
+import { DEPLOY_ENV, ENDPOINTS, ENV_VARS, EXAMPLE, INSTALL_CMD, SECTIONS, TOOLS, TOOL_DESC, UI } from "@/lib/docs/content";
 
 const Code = ({ children }: { children: string }) => (
   <pre className="overflow-x-auto rounded-xl border border-line bg-line/40 p-3 text-xs leading-relaxed"><code>{children}</code></pre>
@@ -26,6 +26,7 @@ export function DocsView() {
       </>
     ),
     example: <Code>{EXAMPLE}</Code>,
+    deploy: <Code>{DEPLOY_ENV}</Code>,
   };
 
   return (
@@ -58,7 +59,7 @@ export function DocsView() {
       </section>
 
       {SECTIONS.slice(2).map((s) => (
-        <Section key={s.id} id={s.id} title={s.title[l]} paras={s.body[l]} list={s.id === "safety"}>{extra[s.id]}</Section>
+        <Section key={s.id} id={s.id} title={s.title[l]} paras={s.body[l]} list={s.id === "safety" || s.id === "limits"}>{extra[s.id]}</Section>
       ))}
 
       <section id="endpoints" className="grid gap-2">

@@ -3,7 +3,8 @@
 | Layer | Command | Covers |
 |---|---|---|
 | Contract | `cargo test` | 12 cases: valid claim, expiry, over-long ticket, reused nonce, second visit, foreign signature, tampered expiry, `max_claims`, close and refund, invalid params, escrow accounting, web/contract encoding parity |
-| Web | `cd apps/web && pnpm lint && pnpm test && pnpm build` | Lint, relayer fallback tests, production build |
+| Web | `cd apps/web && pnpm lint && pnpm test && pnpm build` | Lint, relayer fallback tests, x402 settings and unpaid-402 tests (offline stub facilitator), production build |
+| x402 e2e | `X402_CLIENT_SECRET=S… pnpm x402:e2e` (in `apps/web`) | Live paid round trip against a running app; needs testnet vUSD, see [X402.md](X402.md). Not yet confirmed on chain |
 | MCP | `cd packages/mcp && npm test && npm run typecheck && npm run build` | 13 handler tests, types, bundle |
 | End to end | `scripts/e2e-testnet.sh` | Live testnet |
 

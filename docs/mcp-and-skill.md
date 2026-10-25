@@ -20,7 +20,7 @@ claude mcp add nata \
 | Tool | Inputs | Output |
 |---|---|---|
 | `get_agent_account` | none | agent address, token balance, budget caps |
-| `request_faucet` | `fund_xlm` (default true) | faucet result |
+| `request_faucet` | `fund_xlm` (default true) | XLM via Friendbot, then vUSD from the web app faucet (`NATA_FAUCET_URL`). The vUSD part is reported as unavailable if the URL is unset or the account has no vUSD trustline yet (the faucet answers 422) |
 | `list_active_campaigns` | `limit` 1 to 100, default 20 | running campaigns, newest first |
 | `get_campaign` | `campaign_id` | place, reward, remaining, claims, status |
 | `get_claims` | `campaign_id`, optional `visitor` | claim stats, whether the wallet claimed |
@@ -28,6 +28,10 @@ claude mcp add nata \
 | `close_campaign` | `campaign_id`, optional `dry_run` | refund and transaction link |
 
 Amounts are decimal strings (`"2"`, `"1.25"`) up to 7 decimals. Status values: `running`, `scheduled`, `expired`, `exhausted`, `closed`.
+
+## x402
+
+The MCP server does not pay for x402 content. The paid endpoint `/api/x402/campaigns-premium` is called with any x402 v2 client; see [X402.md](X402.md).
 
 ## Safety
 

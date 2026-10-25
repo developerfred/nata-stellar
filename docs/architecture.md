@@ -16,7 +16,7 @@ Functions: `create_campaign`, `claim`, `close_campaign`, plus reads `get_campaig
 
 ## Web app (`apps/web`)
 
-Next.js App Router PWA, translated into English, Portuguese and Spanish (language from the browser, switcher in the header). Routes: `/` places, `/scan`, `/claim`, `/place/[id]`, `/merchant`, `/faucet`, `/docs`. `lib/chain.ts` is the contract client (also reused by the MCP server), `lib/ticket.ts` encodes tickets and is pinned to the contract by a shared test vector.
+Next.js App Router PWA, translated into English, Portuguese and Spanish (language from the browser, switcher in the header). Routes: `/` places, `/scan`, `/claim`, `/place/[id]`, `/merchant`, `/faucet`, `/docs`. API routes: `/api/campaigns`, `/api/claim` (+ `/status`), `/api/balance`, `/api/trustline`, `/api/wallet`, `/api/faucet`, `/api/x402/campaigns-premium`. `lib/chain.ts` is the contract client (also reused by the MCP server), `lib/ticket.ts` encodes tickets and is pinned to the contract by a shared test vector.
 
 ## Relayer and sponsor
 
@@ -24,7 +24,11 @@ Visitors hold no XLM. `/api/claim` validates the ticket, simulates first (reused
 
 ## Faucet
 
-`/faucet` and `/api/faucet` mint test vUSD (`FAUCET_AMOUNT`, default 100) from the token issuer key in server-only `FAUCET_SECRET`. It refuses any key that is not the token issuer, limits per address, IP and UTC day, caps the daily total, and refuses to run on Vercel without the shared store. `/api/trustline` sponsors the `changeTrust` that lets a device wallet hold vUSD; only that exact transaction shape is sponsored.
+`/faucet` and `/api/faucet` mint test vUSD (`FAUCET_AMOUNT`, default 100) from the token issuer key in server-only `FAUCET_SECRET`. It refuses any key that is not the token issuer (so it is off, 503, if `FAUCET_SECRET` is another account), limits per address, IP and UTC day, caps the daily total, and refuses to run on Vercel without the shared store. A `G…` address needs a trustline first (422 otherwise); a `C…` address receives through the token contract. The faucet, trustline sponsorship and the MCP `request_faucet` are vUSD-specific (they rely on `NEXT_PUBLIC_TOKEN_ISSUER`); the contract itself takes any SEP-41 token per campaign. `/api/trustline` sponsors the `changeTrust` that lets a device wallet hold vUSD; only that exact transaction shape is sponsored.
+
+## x402 paid endpoint
+
+`GET /api/x402/campaigns-premium` is wrapped with `@x402/next` (`lib/server/x402-gate.ts`). Unpaid calls get `402` with the requirements; a payment is verified by the facilitator before the handler runs and settled only if the handler answers 2xx. Settings come from `X402_*` (`lib/server/x402.ts`); with no `X402_PAY_TO` it answers 503, and it fails closed when the facilitator is down. Details and the e2e client: [X402.md](X402.md).
 
 ## Passkey wallet
 
@@ -40,4 +44,4 @@ A stdio MCP server using the official SDK. It reuses `apps/web/lib` for contract
 
 ## Agent-facing docs in the web app
 
-Static routes, no runtime state: `/docs` (HTML, EN/PT/ES), `/llms.txt`, `/llms-full.txt`, `/docs/agents.md` and `/.well-known/mcp.json`, all generated from `apps/web/lib/docs/`.
+Static routes, no runtime state: `/docs` (HTML, EN/PT/ES; also covers the faucet, x402, Vercel deploy and known limitations), `/llms.txt`, `/llms-full.txt`, `/docs/agents.md` and `/.well-known/mcp.json`, all generated from `apps/web/lib/docs/`.
