@@ -15,6 +15,18 @@ type State =
   | { kind: "done"; hash: string; explorer: string; reward: string | null }
   | { kind: "error"; message: string };
 
+/** The server hands back a pending hash when confirmation outlasts its time budget. */
+async function waitForConfirmation(hash: string) {
+  for (let i = 0; i < 20; i++) {
+    await new Promise((r) => setTimeout(r, 2000));
+    const res = await fetch(`/api/claim/status?hash=${encodeURIComponent(hash)}`);
+    const json = await res.json().catch(() => ({}));
+    if (json.status === "SUCCESS") return;
+    if (json.status === "FAILED") throw new Error("The claim failed on-chain. Scan a fresh code and try again.");
+  }
+  throw new Error("Still confirming. Check the transaction on the explorer before scanning again.");
+}
+
 export function ClaimFlow() {
   const params = useSearchParams();
   const w = useWallet();
@@ -45,7 +57,8 @@ export function ClaimFlow() {
         }),
       });
       const json = await res.json();
-      if (!res.ok) throw new Error(json.error ?? "Claim failed");
+      if (!res.ok && res.status !== 202) throw new Error(json.error ?? "Claim failed");
+      if (json.pending) await waitForConfirmation(json.hash);
       let reward: string | null = null;
       try {
         const info = await fetch(`/api/campaigns/${params.get("c")}`).then((r) => r.json());
