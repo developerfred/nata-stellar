@@ -1,0 +1,23 @@
+# Rust / Soroban
+target/
+**/test_snapshots/
+.soroban/
+.stellar/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Env
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# OS / editors
+.DS_Store
+.vscode/
+.idea/
