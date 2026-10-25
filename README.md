@@ -92,6 +92,10 @@ pnpm dev                       # http://localhost:3000
 
 Set the project root to `apps/web`, add the variables above (secrets only as server variables), and deploy. The app keeps no state on disk or in process memory: campaigns are read from the contract on every request, rate limits use the optional Redis store, and the claim, wallet and trustline routes declare a 60 s function timeout. Device wallets get their reward-token trustline automatically (signed by the visitor, fee-bumped by the sponsor), so a new tester's first claim works without XLM.
 
+### vUSD faucet
+
+`/faucet` lets anyone mint test vUSD (100 per request) to fund a campaign or try a claim. The server route signs with `FAUCET_SECRET`, which must be the vUSD issuer key, so use a dedicated testnet issuer and keep it server-only (it can mint without limit). Limits per address, per IP and per UTC day (`FAUCET_*` variables) use the shared Redis limiter; on Vercel the faucet refuses to run without it. Accounts created in the browser (device wallet, merchant counter key) get their trustline automatically; a pasted `G…` address must already trust vUSD, while passkey `C…` wallets need nothing. Concurrent requests race for the issuer's sequence number, so the route retries with a fresh sequence and jitter, and returns a pending hash that the page polls if confirmation takes longer than about 8 s.
+
 ### Languages and onboarding
 
 The UI is available in English, Portuguese and Spanish. The default comes from the browser language and the switcher in the header overrides it (saved in the browser). A first-run walkthrough explains escrowed budgets, the rotating QR, passkey claim, no-XLM fees and testnet-only rewards; the `?` button reopens it. Strings live in `apps/web/lib/i18n/dictionaries.ts`.

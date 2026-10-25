@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { useT } from "@/lib/i18n";
 import type { Key } from "@/lib/i18n/dictionaries";
@@ -68,6 +69,9 @@ export function Onboarding() {
         <div className="text-5xl" aria-hidden>{ICONS[step]}</div>
         <h2 id="ob-title" className="text-2xl font-extrabold tracking-tight">{t(`ob.${n}.title` as Key)}</h2>
         <p className="text-muted">{t(`ob.${n}.body` as Key)}</p>
+        {n === 4 && (
+          <Link href="/faucet" onClick={close} className="text-sm font-semibold underline">{t("faucet.title")} →</Link>
+        )}
         <div className="flex justify-center gap-1.5" aria-hidden>
           {STEPS.map((s, i) => (
             <span key={s} className={`h-1.5 w-6 rounded-full ${i === step ? "bg-custard" : "bg-line"}`} />

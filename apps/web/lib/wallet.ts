@@ -88,16 +88,12 @@ export function forgetWallet() {
 const TRUST = "nata.wallet.trusted";
 
 /**
- * Device wallets are classic accounts, which can only receive the reward token after opting in with a trustline.
- * The visitor signs the opt-in; the server wraps it in a fee bump, so the visitor never pays or touches XLM.
+ * Classic accounts can only receive the reward token after opting in with a trustline. The owner signs the
+ * opt-in; the server wraps it in a fee bump, so nobody pays fees. Idempotent: re-running is harmless.
  */
-export async function ensureTrustline(w: WalletInfo): Promise<void> {
-  if (w.kind !== "local" || !config.tokenIssuer) return;
+export async function addTrustline(kp: Keypair): Promise<void> {
+  if (!config.tokenIssuer) return;
   try {
-    if (localStorage.getItem(TRUST) === w.address) return;
-    const secret = localStorage.getItem("nata.wallet.secret");
-    if (!secret) return;
-    const kp = Keypair.fromSecret(secret);
     const account = await rpcServer().getAccount(kp.publicKey());
     const tx = new TransactionBuilder(account, { fee: BASE_FEE, networkPassphrase: config.networkPassphrase })
       .addOperation(Operation.changeTrust({ asset: new Asset(config.tokenSymbol, config.tokenIssuer) }))
@@ -110,6 +106,19 @@ export async function ensureTrustline(w: WalletInfo): Promise<void> {
       body: JSON.stringify({ xdr: tx.toXDR() }),
     });
     if (!res.ok) throw apiError(await res.json().catch(() => null), "err.trustline");
+  } catch (e) {
+    throw e instanceof KeyedError ? e : new KeyedError("err.trustline");
+  }
+}
+
+/** Device wallets: opt in once, remembered in this browser. */
+export async function ensureTrustline(w: WalletInfo): Promise<void> {
+  if (w.kind !== "local" || !config.tokenIssuer) return;
+  try {
+    if (localStorage.getItem(TRUST) === w.address) return;
+    const secret = localStorage.getItem("nata.wallet.secret");
+    if (!secret) return;
+    await addTrustline(Keypair.fromSecret(secret));
     localStorage.setItem(TRUST, w.address);
   } catch (e) {
     throw e instanceof KeyedError ? e : new KeyedError("err.trustline");

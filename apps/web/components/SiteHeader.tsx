@@ -17,6 +17,7 @@ export function SiteHeader() {
           <Link href="/" className="rounded-full px-3 py-2 hover:bg-line">{t("nav.places")}</Link>
           <Link href="/scan" className="rounded-full px-3 py-2 hover:bg-line">{t("nav.scan")}</Link>
           <Link href="/merchant" className="rounded-full px-3 py-2 hover:bg-line">{t("nav.merchant")}</Link>
+          <Link href="/faucet" className="rounded-full px-3 py-2 hover:bg-line">{t("nav.faucet")}</Link>
           <button onClick={openOnboarding} aria-label={t("nav.help")} title={t("nav.help")} className="rounded-full px-3 py-2 hover:bg-line">?</button>
           <LanguageSwitcher />
         </div>

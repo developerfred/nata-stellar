@@ -217,6 +217,7 @@ export function MerchantConsole() {
 
       <form onSubmit={create} className="card grid gap-4">
         <h2 className="text-xl font-bold">{t("merchant.new")}</h2>
+        <Link href="/faucet" className="text-sm underline">{t("faucet.link")}</Link>
         <div><label className="label" htmlFor="name">{t("merchant.name")}</label><input id="name" className="input" required maxLength={60} value={name} onChange={(e) => setName(e.target.value)} /></div>
         <div className="grid grid-cols-2 gap-3">
           <div><label className="label" htmlFor="kind">{t("merchant.type")}</label><input id="kind" className="input" required maxLength={30} value={kind} onChange={(e) => setKind(e.target.value)} /></div>
