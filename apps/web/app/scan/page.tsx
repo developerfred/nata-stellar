@@ -5,7 +5,7 @@ import { WalletCard } from "@/components/WalletCard";
 export default function ScanPage() {
   return (
     <div className="grid gap-5">
-      <h1 className="text-2xl font-extrabold"><T k="scan.title" /></h1>
+      <h1 className="display text-3xl"><T k="scan.title" /></h1>
       <Scanner />
       <WalletCard compact />
     </div>

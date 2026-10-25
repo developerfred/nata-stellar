@@ -25,13 +25,13 @@ export async function PlaceList() {
 
   return (
     <div className="grid gap-3">
-      <p className="card text-sm text-muted">
+      <p className="card bg-azul-soft text-sm text-muted" role="status">
         <T k={failed ? "list.failed" : isConfigured() ? "list.empty" : "list.unconfigured"} />
       </p>
       {SEED_PLACES.map((p) => (
-        <div key={p.name} className="card opacity-80">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted">{p.kind} · <T k="list.demo" /></p>
-          <h3 className="text-lg font-bold">{p.name}</h3>
+        <div key={p.name} className="card border-dashed">
+          <p className="eyebrow !text-muted">{p.kind} · <T k="list.demo" /></p>
+          <h3 className="display text-xl">{p.name}</h3>
           <p className="mt-1 text-sm text-muted">{p.address}</p>
           <p className="mt-3 text-sm">{p.promo}</p>
         </div>

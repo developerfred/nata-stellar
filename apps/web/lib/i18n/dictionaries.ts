@@ -15,6 +15,7 @@ const en = {
   "home.lead": "Local places pay a real reward when you actually visit. Scan the code at the counter and the money lands in your wallet in seconds.",
   "home.scan": "Scan a counter QR",
   "home.places": "Places paying right now",
+  "hero.alt": "A slowly turning cluster of blue and white azulejo tiles.",
 
   "list.failed": "Could not reach the network. Showing examples.",
   "list.empty": "No live campaigns yet. Merchants can create one in the Merchant tab. Examples below.",
@@ -175,6 +176,7 @@ const pt: Dict = {
   "home.lead": "Locais pagam uma recompensa real quando você realmente os visita. Leia o código no balcão e o dinheiro chega à sua carteira em segundos.",
   "home.scan": "Ler o QR do balcão",
   "home.places": "Locais pagando agora",
+  "hero.alt": "Um conjunto de azulejos azuis e brancos a rodar devagar.",
 
   "list.failed": "Não foi possível acessar a rede. Mostrando exemplos.",
   "list.empty": "Ainda não há campanhas ativas. Comerciantes podem criar uma na aba Comerciante. Exemplos abaixo.",
@@ -332,6 +334,7 @@ const es: Dict = {
   "home.lead": "Los lugares pagan una recompensa real cuando realmente los visitas. Escanea el código en el mostrador y el dinero llega a tu billetera en segundos.",
   "home.scan": "Escanear el QR del mostrador",
   "home.places": "Lugares que pagan ahora",
+  "hero.alt": "Un conjunto de azulejos azules y blancos girando despacio.",
 
   "list.failed": "No se pudo acceder a la red. Mostrando ejemplos.",
   "list.empty": "Aún no hay campañas activas. Los comercios pueden crear una en la pestaña Comercio. Ejemplos abajo.",

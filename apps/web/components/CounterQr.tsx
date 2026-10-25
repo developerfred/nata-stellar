@@ -37,17 +37,17 @@ export function CounterQr() {
     };
   }, [id]);
 
-  if (error) return <p role="alert" className="card text-burnt">{t(error)}</p>;
+  if (error) return <p role="alert" className="card border-burnt text-burnt">{t(error)}</p>;
 
   return (
     <div className="grid justify-items-center gap-4 text-center">
-      <h1 className="text-3xl font-extrabold">{t("counter.title")}</h1>
-      <div className="w-full max-w-sm rounded-3xl bg-white p-4 shadow-lg">
+      <h1 className="display text-4xl">{t("counter.title")}</h1>
+      <div className="w-full max-w-sm rounded-[var(--radius)] border-4 border-azul bg-white p-4">
         {src ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img src={src} alt={t("counter.alt")} className="aspect-square w-full" />
         ) : (
-          <div className="aspect-square w-full animate-pulse rounded-2xl bg-line" />
+          <div className="aspect-square w-full skeleton" />
         )}
       </div>
       <div key={tick} className="h-1.5 w-full max-w-sm overflow-hidden rounded-full bg-line" aria-hidden>
