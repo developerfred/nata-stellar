@@ -37,7 +37,7 @@ contracts/campaigns   Soroban escrow + proof-of-visit contract (Rust)
 apps/web              Visitor PWA + merchant dashboard (Next.js)
 packages/mcp          MCP server so AI agents can create and manage campaigns
 skills/nata           Claude skill that teaches an agent to use that MCP server
-docs/                 Build plan, pitch deck, submission notes
+docs/                 Build plan, pitch deck, submission notes; x402 demo in docs/X402.md
 ARCHITECTURE.md       How Stellar is used: assets, contract IDs, wallet, relayer, RPC
 ```
 
