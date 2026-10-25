@@ -1,9 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import { config } from "@/lib/config";
 import { formatAmount } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 import type { PlaceCampaign } from "@/lib/server/campaigns";
 
 export function PlaceCard({ c }: { c: PlaceCampaign }) {
+  const t = useT();
   const left = Math.max(c.maxClaims - c.claims, 0);
   const live = c.active && left > 0 && BigInt(c.remainingRaw) >= BigInt(c.rewardRaw);
   return (
@@ -15,11 +19,11 @@ export function PlaceCard({ c }: { c: PlaceCampaign }) {
           <p className="mt-1 text-sm text-muted">{c.place.address}</p>
         </div>
         <span className={`shrink-0 rounded-full px-3 py-1 text-sm font-bold ${live ? "bg-custard text-[#2b1d12]" : "bg-line text-muted"}`}>
-          {live ? `+${formatAmount(BigInt(c.rewardRaw))} ${config.tokenSymbol}` : "Ended"}
+          {live ? `+${formatAmount(BigInt(c.rewardRaw))} ${config.tokenSymbol}` : t("place.ended")}
         </span>
       </div>
       {c.place.promo && <p className="mt-3 text-sm">{c.place.promo}</p>}
-      {live && <p className="mt-2 text-xs text-muted">{left} rewards left</p>}
+      {live && <p className="mt-2 text-xs text-muted">{t("place.left", { n: left })}</p>}
     </Link>
   );
 }
