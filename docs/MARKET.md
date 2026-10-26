@@ -44,7 +44,7 @@ None of these steps has started; the MVP exists to make step 1 possible.
 
 - **Open contract**: `contracts/campaigns` is Apache-2.0; anyone can deploy it or read its tickets format (see [ARCHITECTURE.md](../ARCHITECTURE.md)).
 - **MCP server and skill**: an AI agent can list, create and close testnet campaigns ([mcp-and-skill.md](mcp-and-skill.md)).
-- **x402 endpoint**: premium campaign data behind a paid HTTP call; the paid round trip is verified on testnet ([X402.md](X402.md)).
+- **x402 endpoint**: premium campaign data behind a paid HTTP call (status in [X402.md](X402.md)).
 - **Agent docs**: `/llms.txt` and `/.well-known/mcp.json` describe the app to other tools.
 
 ## What we do not know yet
