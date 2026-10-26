@@ -10,12 +10,21 @@ const BUDGET_MS = Number(process.env.FAUCET_BUDGET_MS ?? 8_000);
 
 export const faucetSecret = () => process.env.FAUCET_SECRET || null;
 
+/** Why the faucet is off, as a machine-readable reason (never includes secret values). */
+export function faucetOffReason(): "missing_secret" | "missing_issuer" | "invalid_secret" | "issuer_mismatch" | null {
+  const secret = faucetSecret();
+  if (!secret) return "missing_secret";
+  if (!config.tokenIssuer) return "missing_issuer";
+  try {
+    return Keypair.fromSecret(secret).publicKey() === config.tokenIssuer ? null : "issuer_mismatch";
+  } catch {
+    return "invalid_secret";
+  }
+}
+
 /** The faucet key must be the token's issuer so it can mint; refuse to run with any other key. */
 export function faucetKeypair(): Keypair | null {
-  const secret = faucetSecret();
-  if (!secret || !config.tokenIssuer) return null;
-  const kp = Keypair.fromSecret(secret);
-  return kp.publicKey() === config.tokenIssuer ? kp : null;
+  return faucetOffReason() === null ? Keypair.fromSecret(faucetSecret()!) : null;
 }
 
 export type FaucetResult = { hash: string; status: "SUCCESS" | "PENDING" };
