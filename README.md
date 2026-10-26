@@ -1,12 +1,14 @@
 # nata
 
+**Live: <https://nata-stellar.vercel.app>**
+
 **Pay-per-visit campaigns on Stellar.** Any place (restaurant, café, shop, event booth, museum) locks a stablecoin budget in a Soroban contract that **pays only when a real visit is proven at the counter**. Visitors get instant cashback with no gas and no XLM. On testnet the token is the team-issued `vUSD` (a Stellar Asset Contract); the contract accepts any SEP-41 token per campaign, but USDC has not been tested. Passkey wallets are in the code but not deployed or enabled, so today visitors use a device wallet kept in the browser (see Known limitations).
 
 > Built during HackMeridian (Lisbon, Oct 25–26, 2026). Track: **Genesis** + **Stellar Composed**. Network: **Stellar Testnet**.
 
 | | |
 |---|---|
-| Live app | `TODO: https://<deployment>.vercel.app` |
+| Live app | [nata-stellar.vercel.app](https://nata-stellar.vercel.app) |
 | Demo video | `TODO: <video URL>` |
 | Docs | [docs/README.md](docs/README.md), the in-app `/docs` page (EN/PT/ES), `/llms.txt` |
 | Pitch deck | [docs/nata-pitch-deck-hackmeridian.pptx](docs/nata-pitch-deck-hackmeridian.pptx) |
@@ -158,7 +160,7 @@ The skill in [`skills/nata`](skills/nata/SKILL.md) tells an agent when and how t
 
 ### Fastest path for judges (about 1 minute)
 
-1. Open the live app on your phone: `TODO: live URL`.
+1. Open the live app on your phone: <https://nata-stellar.vercel.app>.
 2. Tap **Create wallet** (a device wallet; passkey wallets are not deployed), then get test vUSD from `/faucet`.
 3. Scan the campaign QR below (or on the pitch deck) with the in-app scanner.
 4. You receive the reward in a few seconds. Tap the link to see the transaction on stellar.expert.

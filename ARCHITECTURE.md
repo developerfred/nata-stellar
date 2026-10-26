@@ -1,5 +1,7 @@
 # Architecture
 
+Live app: <https://nata-stellar.vercel.app> (Stellar Testnet).
+
 nata is a pay-per-visit campaign network on **Stellar Testnet**. Funds and rules live in a Soroban contract; the web app and backend only carry tickets and sponsor fees.
 
 ```

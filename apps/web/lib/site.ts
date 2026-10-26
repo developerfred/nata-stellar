@@ -1,8 +1,9 @@
-/** Absolute origin for robots/sitemap. Public values only; no secrets. */
+/** Production origin, used when NEXT_PUBLIC_SITE_URL is unset. */
+export const DEFAULT_SITE_URL = "https://nata-stellar.vercel.app";
+
+/** Absolute origin for metadata, robots, sitemap and llms.txt. Public values only; no secrets. */
 export function siteUrl(env: Record<string, string | undefined> = process.env): string {
-  const explicit = env.NEXT_PUBLIC_SITE_URL?.trim();
-  const vercel = env.VERCEL_PROJECT_PRODUCTION_URL?.trim() || env.VERCEL_URL?.trim();
-  const origin = explicit || (vercel ? `https://${vercel}` : "http://localhost:3000");
+  const origin = env.NEXT_PUBLIC_SITE_URL?.trim() || DEFAULT_SITE_URL;
   return origin.replace(/\/+$/, "");
 }
 
@@ -18,4 +19,5 @@ export const SITEMAP_PATHS = [
   "/llms-full.txt",
   "/docs/agents.md",
   "/.well-known/mcp.json",
+  "/openapi.json",
 ] as const;

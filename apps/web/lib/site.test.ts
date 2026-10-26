@@ -6,9 +6,9 @@ test("siteUrl prefers NEXT_PUBLIC_SITE_URL and trims trailing slashes", () => {
   assert.equal(siteUrl({ NEXT_PUBLIC_SITE_URL: "https://nata.example/", VERCEL_URL: "x.vercel.app" }), "https://nata.example");
 });
 
-test("siteUrl falls back to the Vercel URL, then localhost", () => {
-  assert.equal(siteUrl({ VERCEL_URL: "x.vercel.app" }), "https://x.vercel.app");
-  assert.equal(siteUrl({}), "http://localhost:3000");
+test("siteUrl falls back to the production domain", () => {
+  assert.equal(siteUrl({}), "https://nata-stellar.vercel.app");
+  assert.equal(siteUrl({ NEXT_PUBLIC_SITE_URL: "  " }), "https://nata-stellar.vercel.app");
 });
 
 test("sitemap lists no API routes", () => {

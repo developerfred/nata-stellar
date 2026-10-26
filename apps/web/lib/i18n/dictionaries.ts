@@ -13,6 +13,8 @@ const en = {
 
   "home.title": "Get paid to show up.",
   "home.lead": "Local places pay a real reward when you actually visit. Scan the code at the counter and the money lands in your wallet in seconds.",
+  "home.what.title": "What is nata?",
+  "home.what.body": "nata is a pay-per-visit campaign network built on Stellar. A place such as a café, shop or museum locks a token budget in a Soroban smart contract. When a visitor scans the rotating QR code at the counter, the contract checks the signature on-chain and pays the reward, so the place pays only for visits that really happened. This is a Stellar Testnet demo: the vUSD rewards are test tokens with no monetary value, and visitors use a device wallet kept in the browser.",
   "home.scan": "Scan a counter QR",
   "home.places": "Places paying right now",
   "hero.alt": "A slowly turning cluster of blue and white azulejo tiles.",
@@ -188,6 +190,8 @@ const pt: Dict = {
 
   "home.title": "Ganhe por aparecer.",
   "home.lead": "Locais pagam uma recompensa real quando você realmente os visita. Leia o código no balcão e o dinheiro chega à sua carteira em segundos.",
+  "home.what.title": "O que é a nata?",
+  "home.what.body": "A nata é uma rede de campanhas de pagamento por visita na Stellar. Um local, como um café, loja ou museu, bloqueia um orçamento de tokens num contrato inteligente Soroban. Quando um visitante lê o QR rotativo no balcão, o contrato verifica a assinatura on-chain e paga a recompensa, então o local paga apenas por visitas que realmente aconteceram. Esta é uma demo na Stellar Testnet: as recompensas em vUSD são tokens de teste sem valor monetário, e os visitantes usam uma carteira de dispositivo guardada no navegador.",
   "home.scan": "Ler o QR do balcão",
   "home.places": "Locais pagando agora",
   "hero.alt": "Um conjunto de azulejos azuis e brancos a rodar devagar.",
@@ -360,6 +364,8 @@ const es: Dict = {
 
   "home.title": "Cobra por presentarte.",
   "home.lead": "Los lugares pagan una recompensa real cuando realmente los visitas. Escanea el código en el mostrador y el dinero llega a tu billetera en segundos.",
+  "home.what.title": "¿Qué es nata?",
+  "home.what.body": "nata es una red de campañas de pago por visita sobre Stellar. Un lugar, como un café, una tienda o un museo, bloquea un presupuesto de tokens en un contrato inteligente Soroban. Cuando un visitante escanea el QR rotativo en el mostrador, el contrato verifica la firma on-chain y paga la recompensa, así que el lugar paga solo por visitas que realmente ocurrieron. Es una demo en Stellar Testnet: las recompensas en vUSD son tokens de prueba sin valor monetario, y los visitantes usan una billetera de dispositivo guardada en el navegador.",
   "home.scan": "Escanear el QR del mostrador",
   "home.places": "Lugares que pagan ahora",
   "hero.alt": "Un conjunto de azulejos azules y blancos girando despacio.",

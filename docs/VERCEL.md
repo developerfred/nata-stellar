@@ -20,7 +20,7 @@ Testnet only. No app code changes are needed; read the risks below before sharin
 | `NEXT_PUBLIC_TOKEN_SYMBOL` (`vUSD`; the code default is `USDC`), `NEXT_PUBLIC_TOKEN_ISSUER` | public | Required for the vUSD demo (symbol, trustline sponsorship, faucet) |
 | `NEXT_PUBLIC_STELLAR_RPC_URL`, `NEXT_PUBLIC_STELLAR_NETWORK_PASSPHRASE`, `NEXT_PUBLIC_FRIENDBOT_URL`, `NEXT_PUBLIC_EXPLORER_URL` | public | Optional, testnet defaults |
 | `NEXT_PUBLIC_WALLET_WASM_HASH` | public | Leave empty: the passkey wallet factory is not deployed |
-| `NEXT_PUBLIC_SITE_URL` | public | Optional, makes links in `/llms.txt` and `/.well-known/mcp.json` absolute |
+| `NEXT_PUBLIC_SITE_URL` | public | Optional. Absolute origin for metadata, sitemap, `/llms.txt` and `/.well-known/mcp.json`; defaults to `https://nata-stellar.vercel.app` |
 | `SPONSOR_SECRET` | server | Required. Funded testnet account: pays claim fees (or is the fallback when the relayer fails) and signs the fee bump of `/api/trustline` |
 | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (or `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | server | Required for the faucet (it answers 503 on Vercel without them); recommended for claim rate limits |
 | `FAUCET_SECRET` | server | For the faucet. **Must be the secret of the vUSD issuer** (`NEXT_PUBLIC_TOKEN_ISSUER`); any other key leaves the faucet off. Testnet-only dedicated key: it can mint unlimited vUSD |

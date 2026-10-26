@@ -20,7 +20,7 @@ Deadline: Mon Oct 26, 12:00 (Lisbon).
 - [ ] Deploy to Vercel (Root Directory `apps/web`, env vars from `.env.example`) and fund the sponsor account
 - [ ] Confirm a fresh browser wallet can claim vUSD (trustline, see `docs/VERCEL.md`)
 - [ ] Record the 3 min English demo video (`nata-video/` script and storyboard) and add the URL
-- [ ] Fill the remaining placeholders: live URL, video URL, demo QR, license, `close_campaign` link
+- [ ] Fill the remaining placeholders: video URL, demo QR, license, `close_campaign` link
 - [ ] Add the Team slide and live URL/QR to the pitch deck
 - [ ] Submit, target 11:00
 
@@ -32,7 +32,7 @@ Deadline: Mon Oct 26, 12:00 (Lisbon).
 
 | Placeholder | Where it appears |
 |---|---|
-| Live app URL | README header table and demo instructions; add `NEXT_PUBLIC_SITE_URL` on Vercel |
+| Live app URL | Done: <https://nata-stellar.vercel.app> (README header table and demo instructions). Optionally set `NEXT_PUBLIC_SITE_URL` on Vercel; the code falls back to this URL |
 | Demo video URL | README header table |
 | Demo campaign QR image (`docs/demo-qr.png`) | README demo instructions |
 | Passkey wallet WASM hash / factory | `NEXT_PUBLIC_WALLET_WASM_HASH`, empty on purpose until deployed |

@@ -20,6 +20,10 @@ export default function Home() {
         </div>
         <Hero />
       </section>
+      <section className="card grid gap-2 p-5" aria-labelledby="what-is-nata">
+        <h2 id="what-is-nata" className="display text-2xl"><T k="home.what.title" /></h2>
+        <p className="text-muted"><T k="home.what.body" /></p>
+      </section>
       <WalletCard />
       <section className="grid gap-4">
         <div className="flex items-baseline justify-between gap-3">
