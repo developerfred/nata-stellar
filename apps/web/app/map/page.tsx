@@ -4,7 +4,7 @@ import { T } from "@/lib/i18n";
 import { ChallengeMap } from "@/components/ChallengeMap";
 
 export const metadata: Metadata = {
-  title: "Lisbon challenge map · nata",
+  title: "Lisbon challenge map",
   description: "Animated map of Lisbon showing the places paying people to visit right now.",
   alternates: { canonical: "/map" },
 };
