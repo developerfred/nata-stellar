@@ -1,6 +1,6 @@
 # Overview
 
-nata is a pay-per-visit campaign network on **Stellar Testnet**. A place (café, shop, museum, event booth) locks a token budget in a Soroban contract that pays a fixed reward only when a real visit is proven at the counter. Visitors receive the reward in seconds in a passkey or device wallet, with no seed phrase and no XLM for fees.
+nata is a pay-per-visit campaign network on **Stellar Testnet**. A place (café, shop, museum, event booth) locks a token budget in a Soroban contract that pays a fixed reward only when a real visit is proven at the counter. Visitors receive the reward in seconds in a device wallet (passkey wallets are in the code but not deployed), with no seed phrase to manage and no XLM for fees.
 
 ## Flow
 

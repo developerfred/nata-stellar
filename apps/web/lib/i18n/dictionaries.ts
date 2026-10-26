@@ -157,7 +157,7 @@ const en = {
   "ob.3.title": "If you run a place",
   "ob.3.body": "Lock a budget in a smart contract (escrow). It pays a visitor only when they scan your rotating counter QR, one reward per wallet. When you are done, close the campaign and the unspent budget comes back to you.",
   "ob.4.title": "No crypto needed",
-  "ob.4.body": "Create your wallet with a passkey (Face ID or Touch ID). No seed phrase, and you never need XLM: network fees are sponsored for you. Need test vUSD? The faucet gives you some.",
+  "ob.4.body": "Create a wallet on this device. No seed phrase to write down, and you never need XLM: network fees are sponsored for you. Need test vUSD? The faucet gives you some.",
   "ob.5.title": "Testnet only",
   "ob.5.body": "This is a hackathon demo on the Stellar Testnet. Rewards are test tokens (vUSD) with no monetary value, so feel free to try everything.",
 } as const;
@@ -319,7 +319,7 @@ const pt: Dict = {
   "ob.3.title": "Se você tem um local",
   "ob.3.body": "Bloqueie um orçamento num contrato inteligente (escrow). Ele só paga um visitante quando ele lê o seu QR rotativo do balcão, uma recompensa por carteira. Quando terminar, encerre a campanha e o orçamento não gasto volta para você.",
   "ob.4.title": "Sem cripto necessária",
-  "ob.4.body": "Crie a sua carteira com uma passkey (Face ID ou Touch ID). Sem frase secreta e sem precisar de XLM: as taxas da rede são patrocinadas. Precisa de vUSD de teste? O faucet fornece.",
+  "ob.4.body": "Crie uma carteira neste dispositivo. Sem frase secreta para anotar e sem precisar de XLM: as taxas da rede são patrocinadas. Precisa de vUSD de teste? O faucet fornece.",
   "ob.5.title": "Apenas testnet",
   "ob.5.body": "Esta é uma demo de hackathon na Stellar Testnet. As recompensas são tokens de teste (vUSD) sem valor monetário, por isso experimente à vontade.",
 };
@@ -478,7 +478,7 @@ const es: Dict = {
   "ob.3.title": "Si tienes un negocio",
   "ob.3.body": "Bloquea un presupuesto en un contrato inteligente (escrow). Solo paga a un visitante cuando escanea tu QR rotativo del mostrador, una recompensa por billetera. Al terminar, cierra la campaña y el presupuesto no gastado vuelve a ti.",
   "ob.4.title": "Sin necesidad de cripto",
-  "ob.4.body": "Crea tu billetera con una passkey (Face ID o Touch ID). Sin frase semilla y sin necesitar XLM: las comisiones de red están patrocinadas. ¿Necesitas vUSD de prueba? El faucet te da.",
+  "ob.4.body": "Crea una billetera en este dispositivo. Sin frase semilla que anotar y sin necesitar XLM: las comisiones de red están patrocinadas. ¿Necesitas vUSD de prueba? El faucet te da.",
   "ob.5.title": "Solo testnet",
   "ob.5.body": "Esta es una demo de hackathon en la Stellar Testnet. Las recompensas son tokens de prueba (vUSD) sin valor monetario, así que prueba todo con libertad.",
 };

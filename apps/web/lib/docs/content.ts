@@ -30,7 +30,7 @@ NEXT_PUBLIC_TOKEN_SYMBOL=${FACTS.tokenSymbol}
 NEXT_PUBLIC_TOKEN_ISSUER=${FACTS.tokenIssuer}   # vUSD issuer (G...)
 NEXT_PUBLIC_FRIENDBOT_URL=https://friendbot.stellar.org
 NEXT_PUBLIC_EXPLORER_URL=https://stellar.expert/explorer/testnet
-NEXT_PUBLIC_WALLET_WASM_HASH=   # empty = device wallets (passkey factory not deployed)
+NEXT_PUBLIC_WALLET_WASM_HASH=   # empty = device wallets (passkey factory not deployed, leave empty)
 NEXT_PUBLIC_SITE_URL=   # optional, e.g. https://<host>: absolute links in /llms.txt
 
 # Server only (never NEXT_PUBLIC_)
@@ -174,15 +174,15 @@ export const SECTIONS: { id: string; title: Tr; body: Record<Locale, string[]> }
     body: {
       en: [
         "POST /api/faucet with {\"address\":\"G… or C…\"} mints 100 test vUSD (FAUCET_AMOUNT). The /faucet page uses it and the MCP tool request_faucet calls it when NATA_FAUCET_URL points to <host>/api/faucet. Limits: 3 per address and 10 per IP per UTC day, 20000 vUSD per day in total.",
-        "A G… address needs the vUSD trustline first (the app opens it with a sponsored transaction); otherwise the answer is 422. A C… passkey wallet needs none. The route answers 503 when FAUCET_SECRET is missing or is not the vUSD issuer key, and on Vercel also when the shared rate-limit store (Upstash or Vercel KV) is missing. The MCP does not add the trustline for the agent account, so request_faucet only funds XLM until the account has one.",
+        "A G… address needs the vUSD trustline first (the app opens it with a sponsored transaction); otherwise the answer is 422. A C… passkey wallet (not deployed) would need none. The route answers 503 when FAUCET_SECRET is missing or is not the vUSD issuer key, and on Vercel also when the shared rate-limit store (Upstash or Vercel KV) is missing. The MCP does not add the trustline for the agent account, so request_faucet only funds XLM until the account has one.",
       ],
       pt: [
         "POST /api/faucet com {\"address\":\"G… ou C…\"} emite 100 vUSD de teste (FAUCET_AMOUNT). A página /faucet usa essa rota e a ferramenta MCP request_faucet a chama quando NATA_FAUCET_URL aponta para <host>/api/faucet. Limites: 3 por endereço e 10 por IP por dia UTC, 20000 vUSD por dia no total.",
-        "Um endereço G… precisa antes da trustline de vUSD (o app a abre com uma transação patrocinada); senão a resposta é 422. Uma carteira passkey C… não precisa. A rota responde 503 se FAUCET_SECRET faltar ou não for a chave emissora do vUSD, e na Vercel também se faltar o armazenamento compartilhado de limites (Upstash ou Vercel KV). O MCP não cria a trustline da conta do agente, então request_faucet só financia XLM até a conta ter uma.",
+        "Um endereço G… precisa antes da trustline de vUSD (o app a abre com uma transação patrocinada); senão a resposta é 422. Uma carteira passkey C… (não implantada) não precisaria. A rota responde 503 se FAUCET_SECRET faltar ou não for a chave emissora do vUSD, e na Vercel também se faltar o armazenamento compartilhado de limites (Upstash ou Vercel KV). O MCP não cria a trustline da conta do agente, então request_faucet só financia XLM até a conta ter uma.",
       ],
       es: [
         "POST /api/faucet con {\"address\":\"G… o C…\"} emite 100 vUSD de prueba (FAUCET_AMOUNT). La página /faucet usa esa ruta y la herramienta MCP request_faucet la llama cuando NATA_FAUCET_URL apunta a <host>/api/faucet. Límites: 3 por dirección y 10 por IP por día UTC, 20000 vUSD por día en total.",
-        "Una dirección G… necesita antes la trustline de vUSD (la app la abre con una transacción patrocinada); si no, la respuesta es 422. Una billetera passkey C… no la necesita. La ruta responde 503 si falta FAUCET_SECRET o no es la clave emisora de vUSD, y en Vercel también si falta el almacén compartido de límites (Upstash o Vercel KV). El MCP no crea la trustline de la cuenta del agente, así que request_faucet solo financia XLM hasta que la cuenta tenga una.",
+        "Una dirección G… necesita antes la trustline de vUSD (la app la abre con una transacción patrocinada); si no, la respuesta es 422. Una billetera passkey C… (no desplegada) no la necesitaría. La ruta responde 503 si falta FAUCET_SECRET o no es la clave emisora de vUSD, y en Vercel también si falta el almacén compartido de límites (Upstash o Vercel KV). El MCP no crea la trustline de la cuenta del agente, así que request_faucet solo financia XLM hasta que la cuenta tenga una.",
       ],
     },
   },
@@ -218,29 +218,29 @@ export const SECTIONS: { id: string; title: Tr; body: Record<Locale, string[]> }
     title: { en: "Known limitations", pt: "Limitações conhecidas", es: "Limitaciones conocidas" },
     body: {
       en: [
-        "Passkey wallets: the smart wallet factory and WebAuthn verifier are not deployed and NEXT_PUBLIC_WALLET_WASM_HASH is a TODO, so visitors use a device wallet (key in localStorage; clearing site data loses it).",
+        "Passkey wallets (Face ID / Touch ID): supported by the code but not deployed or enabled. The smart wallet factory and WebAuthn verifier are not deployed and NEXT_PUBLIC_WALLET_WASM_HASH is empty, so visitors use a device wallet (key in localStorage; clearing site data loses it).",
         "One token per deployment: the UI uses a single NEXT_PUBLIC_TOKEN_CONTRACT_ID. The contract takes a token per campaign, but multi-token is not supported in the UI. The faucet, trustline sponsorship and MCP faucet are specific to the vUSD issuer; Circle USDC is a planned swap-in, not tested.",
-        "x402: the paid round trip (verify, handler, settle) with vUSD against a live facilitator is not yet confirmed on chain; only the 402 and refusal paths are tested.",
+        "x402: the paid round trip (verify, handler, settle) was verified once on testnet with 0.01 vUSD (tx aabd9305…bc9b0be). Mainnet and USDC were not tested.",
         "Faucet: FAUCET_SECRET is the issuer key. If it leaks, anyone can mint vUSD, so keep it dedicated and testnet-only.",
-        "Relayer: the OpenZeppelin path is unit-tested but not run against a live relayer; without it the sponsor account pays every fee.",
+        "Relayer: the OpenZeppelin path was verified live on testnet (9/9 checks, claim tx 9f181f3f…b368f3, close_campaign tx 51fec925…179514); without it the sponsor account pays every fee.",
         "Rate limits are only a soft per-instance limit without Upstash or Vercel KV. No external audit. Testnet only.",
         "Still to fill by the team: live URL and demo video URL (see docs/SUBMISSION.md).",
       ],
       pt: [
-        "Carteiras passkey: a factory da smart wallet e o verificador WebAuthn não estão implantados e NEXT_PUBLIC_WALLET_WASM_HASH é um TODO, então visitantes usam carteira do dispositivo (chave em localStorage; limpar os dados do site perde a conta).",
+        "Carteiras passkey (Face ID / Touch ID): suportadas pelo código, mas não implantadas nem ativadas. A factory da smart wallet e o verificador WebAuthn não estão implantados e NEXT_PUBLIC_WALLET_WASM_HASH está vazio, então visitantes usam carteira do dispositivo (chave em localStorage; limpar os dados do site perde a conta).",
         "Um token por deployment: a UI usa um único NEXT_PUBLIC_TOKEN_CONTRACT_ID. O contrato aceita um token por campanha, mas multi-token não é suportado na UI. O faucet, o patrocínio de trustline e o faucet do MCP são específicos do emissor do vUSD; o USDC da Circle é uma troca planejada, não testada.",
-        "x402: o ciclo pago (verify, handler, settle) com vUSD contra um facilitador real ainda não foi confirmado on-chain; só os caminhos 402 e de recusa foram testados.",
+        "x402: o ciclo pago (verify, handler, settle) foi verificado uma vez na testnet com 0.01 vUSD (tx aabd9305…bc9b0be). Mainnet e USDC não foram testados.",
         "Faucet: FAUCET_SECRET é a chave do emissor. Se vazar, qualquer pessoa pode emitir vUSD; mantenha-a dedicada e só testnet.",
-        "Relayer: o caminho OpenZeppelin tem testes unitários mas não rodou contra um relayer real; sem ele a conta sponsor paga todas as taxas.",
+        "Relayer: o caminho OpenZeppelin foi verificado ao vivo na testnet (9/9 checks, claim tx 9f181f3f…b368f3, close_campaign tx 51fec925…179514); sem ele a conta sponsor paga todas as taxas.",
         "Sem Upstash ou Vercel KV os limites são só um limite fraco por instância. Sem auditoria externa. Somente testnet.",
         "A preencher pela equipe: URL ao vivo e URL do vídeo de demo (veja docs/SUBMISSION.md).",
       ],
       es: [
-        "Billeteras passkey: la factory de la smart wallet y el verificador WebAuthn no están desplegados y NEXT_PUBLIC_WALLET_WASM_HASH es un TODO, así que los visitantes usan una billetera del dispositivo (clave en localStorage; borrar los datos del sitio pierde la cuenta).",
+        "Billeteras passkey (Face ID / Touch ID): soportadas por el código, pero no desplegadas ni habilitadas. La factory de la smart wallet y el verificador WebAuthn no están desplegados y NEXT_PUBLIC_WALLET_WASM_HASH está vacío, así que los visitantes usan una billetera del dispositivo (clave en localStorage; borrar los datos del sitio pierde la cuenta).",
         "Un token por despliegue: la UI usa un único NEXT_PUBLIC_TOKEN_CONTRACT_ID. El contrato admite un token por campaña, pero multi-token no está soportado en la UI. El faucet, el patrocinio de trustline y el faucet del MCP son específicos del emisor de vUSD; el USDC de Circle es un reemplazo previsto, no probado.",
-        "x402: el ciclo pagado (verify, handler, settle) con vUSD contra un facilitador real aún no está confirmado on-chain; solo se probaron los caminos 402 y de rechazo.",
+        "x402: el ciclo pagado (verify, handler, settle) se verificó una vez en testnet con 0.01 vUSD (tx aabd9305…bc9b0be). Mainnet y USDC no se probaron.",
         "Faucet: FAUCET_SECRET es la clave del emisor. Si se filtra, cualquiera puede emitir vUSD; manténgala dedicada y solo testnet.",
-        "Relayer: la ruta OpenZeppelin tiene pruebas unitarias pero no se ejecutó contra un relayer real; sin él la cuenta sponsor paga todas las comisiones.",
+        "Relayer: la ruta OpenZeppelin se verificó en vivo en testnet (9/9 checks, claim tx 9f181f3f…b368f3, close_campaign tx 51fec925…179514); sin él la cuenta sponsor paga todas las comisiones.",
         "Sin Upstash ni Vercel KV los límites son solo un límite débil por instancia. Sin auditoría externa. Solo testnet.",
         "Por completar por el equipo: URL en vivo y URL del video de demo (vea docs/SUBMISSION.md).",
       ],

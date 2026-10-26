@@ -15,7 +15,7 @@ How it fits together:
 
 - The merchant key (ed25519) is generated in the merchant's browser and signs `(contract, campaign, nonce, expires_at)`. The contract verifies it, so the backend has no power over funds.
 - The place profile (name, menu, promo) is stored on-chain in the campaign's `meta_uri` as a `data:` URI. No database.
-- Visitors use a passkey smart wallet when `NEXT_PUBLIC_WALLET_WASM_HASH` and a relayer are configured, otherwise a device wallet.
+- Visitors use a device wallet. A passkey smart wallet path exists in the code (needs `NEXT_PUBLIC_WALLET_WASM_HASH` and a relayer) but the factory is not deployed, so it is off.
 
 ## Run
 

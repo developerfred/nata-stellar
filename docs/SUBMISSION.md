@@ -36,6 +36,5 @@ Deadline: Mon Oct 26, 12:00 (Lisbon).
 | Demo video URL | README header table |
 | Demo campaign QR image (`docs/demo-qr.png`) | README demo instructions |
 | Passkey wallet WASM hash / factory | `NEXT_PUBLIC_WALLET_WASM_HASH`, empty on purpose until deployed |
-| x402 paid round trip with a live facilitator | `docs/X402.md`, "Not verified" |
 
 Find them with `grep -rn TODO README.md ARCHITECTURE.md docs/`.
