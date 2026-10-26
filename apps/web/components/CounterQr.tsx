@@ -37,7 +37,13 @@ export function CounterQr() {
     };
   }, [id]);
 
-  if (error) return <p role="alert" className="card border-burnt text-burnt">{t(error)}</p>;
+  if (error)
+    return (
+      <>
+        <h1 className="sr-only">{t("counter.title")}</h1>
+        <p role="alert" className="card border-burnt text-burnt">{t(error)}</p>
+      </>
+    );
 
   return (
     <div className="grid justify-items-center gap-4 text-center">
