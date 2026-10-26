@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { StrKey } from "@stellar/stellar-sdk";
 import { config } from "@/lib/config";
-import { FAUCET_AMOUNT, faucetKeypair, sendFaucet } from "@/lib/server/faucet";
+import { FAUCET_AMOUNT, faucetOffReason, sendFaucet } from "@/lib/server/faucet";
 import { allow, sharedLimiterConfigured } from "@/lib/server/ratelimit";
 
 // The send is bounded to ~8 s and returns a pending hash after that, so a 10 s free-plan limit is enough.
@@ -12,10 +12,15 @@ const fail = (code: string, error: string, status: number) => NextResponse.json(
 
 /** Mints test vUSD to a testnet address. Server-only key; limits are per address, per IP and global per day. */
 export async function POST(req: Request) {
-  if (!faucetKeypair()) return fail("err.faucet_off", "Faucet is not configured", 503);
+  const off = faucetOffReason();
+  if (off) {
+    console.error(`[faucet] disabled: ${off} (needs FAUCET_SECRET = secret of NEXT_PUBLIC_TOKEN_ISSUER)`);
+    return NextResponse.json({ error: "Faucet is not configured", code: "err.faucet_off", reason: off }, { status: 503 });
+  }
   // On Vercel, per-instance memory is not a limit at all: refuse to mint money without the shared store.
   if (process.env.VERCEL && !sharedLimiterConfigured()) {
-    return fail("err.faucet_off", "Faucet needs the shared rate-limit store", 503);
+    console.error("[faucet] disabled: missing_store (set UPSTASH_REDIS_REST_URL/TOKEN or KV_REST_API_URL/TOKEN)");
+    return NextResponse.json({ error: "Faucet needs the shared rate-limit store", code: "err.faucet_off", reason: "missing_store" }, { status: 503 });
   }
 
   const { address } = (await req.json().catch(() => ({}))) as { address?: string };
