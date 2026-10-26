@@ -9,6 +9,7 @@ export function siteUrl(env: Record<string, string | undefined> = process.env): 
 /** Public, static pages and machine-readable docs. API routes are excluded on purpose. */
 export const SITEMAP_PATHS = [
   "/",
+  "/map",
   "/docs",
   "/faucet",
   "/scan",

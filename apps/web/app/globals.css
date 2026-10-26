@@ -132,3 +132,18 @@ a.card:active { transform: scale(0.995); }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
 }
+
+/* Lisbon challenge map */
+.lisbon-map .map-zone { font: 700 24px var(--font-sans); fill: var(--muted); paint-order: stroke; stroke: var(--card); stroke-width: 6px; }
+.lisbon-map .map-water { font: italic 26px var(--font-display); fill: var(--azul); opacity: 0.6; }
+.lisbon-map .map-pin { cursor: pointer; outline: none; }
+.lisbon-map .map-dot { fill: var(--custard); stroke: var(--azul); stroke-width: 3; transition: transform 0.15s ease-out; }
+.lisbon-map .map-core { fill: var(--azul); }
+.lisbon-map .map-pulse { fill: var(--custard); opacity: 0; transform-box: fill-box; transform-origin: center; animation: map-pulse 2.4s ease-out infinite; }
+.lisbon-map .map-pin[data-demo] .map-dot { fill: var(--card); stroke-dasharray: 4 3; }
+.lisbon-map .map-pin[data-on] .map-dot, .lisbon-map .map-pin:focus-visible .map-dot { stroke: var(--foreground); stroke-width: 4; transform: scale(1.35); transform-box: fill-box; transform-origin: center; }
+.lisbon-map .map-tram { offset-rotate: 0deg; animation: map-tram 28s linear infinite; }
+.lisbon-map .map-boat { animation: map-boat 40s linear infinite; }
+@keyframes map-pulse { 0% { transform: scale(1); opacity: 0.75; } 100% { transform: scale(2.6); opacity: 0; } }
+@keyframes map-tram { 0% { offset-distance: 0%; } 50% { offset-distance: 100%; } 100% { offset-distance: 0%; } }
+@keyframes map-boat { 0% { transform: translateX(-30px); } 100% { transform: translateX(1030px); } }

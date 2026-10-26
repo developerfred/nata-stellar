@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { T } from "@/lib/i18n";
 import { Hero } from "@/components/azulejo/Hero";
+import { ChallengeMap } from "@/components/ChallengeMap";
 import { PlaceList } from "@/components/PlaceList";
 import { WalletCard } from "@/components/WalletCard";
 
@@ -20,6 +21,15 @@ export default function Home() {
         <Hero />
       </section>
       <WalletCard />
+      <section className="grid gap-4">
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 className="display text-2xl"><T k="map.title" /></h2>
+          <Link href="/map" className="min-h-11 content-center text-sm font-semibold text-azul underline underline-offset-4"><T k="map.open" /></Link>
+        </div>
+        <Suspense fallback={<div className="skeleton h-72" />}>
+          <ChallengeMap compact />
+        </Suspense>
+      </section>
       <section className="grid gap-4">
         <h2 className="display text-2xl"><T k="home.places" /></h2>
         <Suspense fallback={<div className="skeleton h-32" />}>
