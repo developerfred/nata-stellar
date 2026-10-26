@@ -43,7 +43,7 @@ export function Hero() {
   }, []);
 
   return (
-    <div role="img" aria-label={t("hero.alt")} className="relative mx-auto aspect-square w-64 sm:w-72">
+    <div role="img" aria-label={t("hero.alt")} suppressHydrationWarning className="relative mx-auto aspect-square w-64 sm:w-72">
       <div className={`absolute inset-0 transition-opacity duration-500 ${ready ? "opacity-0" : "opacity-100"}`}>
         <TileCluster />
       </div>
