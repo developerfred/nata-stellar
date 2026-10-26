@@ -15,6 +15,7 @@ export function llmsTxt(): string {
 - [Agent guide (full)](${SITE}/llms-full.txt): MCP install, tools, safety limits, examples
 - [Agent guide (markdown)](${SITE}/docs/agents.md): same content
 - [MCP server config](${SITE}/.well-known/mcp.json): machine-readable install description
+- [Lisbon challenge map](${SITE}/map): animated map of places with active challenges, each pin links to its claim page
 - [Docs page (EN/PT/ES)](${SITE}/docs): human-readable version, with faucet, x402, Vercel deploy and known limitations
 - [robots.txt](${SITE}/robots.txt) and [sitemap.xml](${SITE}/sitemap.xml): crawler rules and the list of public pages
 

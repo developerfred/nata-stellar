@@ -14,3 +14,7 @@ test("siteUrl falls back to the Vercel URL, then localhost", () => {
 test("sitemap lists no API routes", () => {
   assert.ok(SITEMAP_PATHS.every((p) => !p.startsWith("/api")));
 });
+
+test("sitemap includes the Lisbon map", () => {
+  assert.ok((SITEMAP_PATHS as readonly string[]).includes("/map"));
+});
