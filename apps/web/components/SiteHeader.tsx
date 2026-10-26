@@ -16,7 +16,7 @@ const LINKS = [
 ] as const;
 
 const LINK_CLASS =
-  "flex min-h-11 flex-1 items-center justify-center rounded-full px-3 text-muted hover:bg-azul-soft aria-[current=page]:text-azul aria-[current=page]:underline aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-8 sm:flex-none";
+  "flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-full px-1.5 sm:px-3 text-muted hover:bg-azul-soft aria-[current=page]:text-azul aria-[current=page]:underline aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-8 sm:flex-none";
 
 function NavLinks({ path }: { path: string | null }) {
   const t = useT();
