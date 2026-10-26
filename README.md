@@ -31,6 +31,42 @@ The merchant pays per proven visit, not per ad. The visitor gets the reward as a
 - **Merchants:** small local businesses and event organizers.
 - **Visitors:** people moving around a city or an event, such as tourists and conference attendees.
 
+## Quick start (60 seconds, local)
+
+```bash
+git clone https://github.com/developerfred/nata-stellar && cd nata-stellar
+cargo test                                          # 12 contract tests
+cd apps/web && pnpm install && cp .env.example .env.local
+pnpm dev                                            # http://localhost:3000
+```
+
+`.env.example` already points at the deployed testnet contract and vUSD token, so the app runs against testnet as is. Claims need a funded `SPONSOR_SECRET` (see [Environment variables](#environment-variables)); the read-only pages work without it. The one-minute judge flow without installing anything is under [Demo instructions](#demo-instructions) once the live URL is filled in.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  M[Merchant dashboard] -->|create_campaign + budget| C[(campaigns<br/>Soroban contract)]
+  M -->|signs rotating QR ticket| Q[Counter QR, 20 s]
+  V[Visitor PWA<br/>device wallet] -->|scans| Q
+  V -->|ticket + wallet address| API[Next.js /api/claim]
+  API -->|simulate, then submit<br/>fees sponsored| C
+  C -->|verifies signature, expiry,<br/>nonce, one claim per wallet| T[vUSD token<br/>Stellar Asset Contract]
+  T -->|reward| V
+  A[AI agent] -->|MCP tools| C
+  X[x402 client] -->|paid HTTP call| API
+```
+
+Details: [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Why Stellar
+
+- **Soroban escrow:** the budget is locked in a contract and the visit rules (signature, expiry, single-use nonce, one claim per wallet) run on-chain, so the backend cannot move funds.
+- **Stellar Asset Contract token:** rewards are a SEP-41 token (vUSD on testnet); the contract takes any SEP-41 token per campaign.
+- **Fee sponsorship:** the server (or the OpenZeppelin relayer) pays fees, so a visitor needs no XLM; trustlines are opened with a fee-bumped transaction.
+- **x402:** an HTTP paywall on Stellar for premium campaign data.
+- **MCP:** an MCP server and Claude skill let agents create and manage testnet campaigns.
+
 ## Repository layout
 
 ```
@@ -180,6 +216,38 @@ When both are set, `/api/claim` and `/api/wallet` submit through the relayer and
 | Fake merchant signing visits for themselves | They only spend their own budget, so there is no incentive |
 | Malicious backend | Cannot move funds. Rules live in the contract, and rewards can only go to the bound visitor address |
 
+## What we built during HackMeridian
+
+Everything was built in the event window; times below are UTC commit times from the git history (`git log --format='%ad %s' --date=iso`).
+
+| When (2026) | Milestone |
+|---|---|
+| Oct 25, 18:26 | Repository initialized (first commit); build plan |
+| Oct 25, 18:30 | `campaigns` Soroban contract with merchant-signed proof of visit, then its tests |
+| Oct 25, 18:39 | Web app: chain client, claim/wallet/balance API routes, visitor, scan and merchant counter screens |
+| Oct 25, 20:08 | Contract and token deployed to testnet; evidence recorded |
+| Oct 25, 22:25 | Testnet end-to-end script (`scripts/e2e-testnet.sh`) |
+| Oct 25, 22:51 to 23:13 | Audit fixes (PRs #1, #2), EN/PT/ES UI and onboarding, sponsored trustline, vUSD faucet (PR #3), MCP server and Claude skill (PR #5) |
+| Oct 25, 23:31 to 23:42 | x402 paywalled endpoint (PR #9) |
+| Oct 25, 23:46 | Azulejo design system and three.js hero (PR #10) |
+| Oct 25, 23:51 | Docs and `/docs` page with agent endpoints (PR #6) |
+| Oct 26 | Pitch deck corrections, security policy, CI, market and innovation notes |
+
+At the last count the history had 60 commits and 12 pull requests. Prior work: none (see below).
+
+## Roadmap
+
+Not built yet; listed in rough priority order.
+
+1. Public deployment and demo video (tracked in [docs/SUBMISSION.md](docs/SUBMISSION.md)).
+2. Passkey wallets: deploy the factory and WebAuthn verifier.
+3. Real stablecoin (USDC/EURC) end to end, with a multi-token UI.
+4. Anti-sybil proofs and optional geofencing.
+5. Spending rewards across the merchant network; cash-out through an anchor.
+6. Merchant pilot and mainnet after a security review.
+
+Market and ecosystem plan: [docs/MARKET.md](docs/MARKET.md). How nata differs from loyalty apps, cashback and QR coupons: [docs/INNOVATION.md](docs/INNOVATION.md).
+
 ## Out of scope for this MVP
 
 Mainnet, bank cash-out via an anchor, GPS geofencing, strong anti-sybil proofs, and a security audit. These are on the roadmap.
@@ -197,6 +265,10 @@ None. Everything in this repository was built during HackMeridian; see the dated
 - Testnet only, no external audit.
 
 Open placeholders (live URL, video URL, demo QR) are tracked in [docs/SUBMISSION.md](docs/SUBMISSION.md).
+
+## Contributing and security
+
+[CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md).
 
 ## License
 
