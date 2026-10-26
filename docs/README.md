@@ -18,6 +18,6 @@
 
 Also see the root [README.md](../README.md) and [ARCHITECTURE.md](../ARCHITECTURE.md) (deployed IDs and Stellar building blocks).
 
-The running app serves the agent-facing part of these docs at `/docs` (EN/PT/ES, includes faucet, x402, Vercel deploy and known limitations), `/llms.txt`, `/llms-full.txt`, `/docs/agents.md` and `/.well-known/mcp.json`.
+The running app serves the agent-facing part of these docs at `/docs` (EN/PT/ES, includes faucet, x402, Vercel deploy and known limitations), `/llms.txt`, `/llms-full.txt`, `/docs/agents.md`, `/.well-known/mcp.json`, `/robots.txt` and `/sitemap.xml`.
 
 License: [Apache-2.0](../LICENSE), copyright 2026 codingsh.

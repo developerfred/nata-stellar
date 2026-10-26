@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test lib/server/fallback.test.ts lib/server/x402.test.ts && node --import ./lib/server/test-resolve.mjs --test lib/server/x402-gate.test.ts",
+    "test": "node --test lib/site.test.ts lib/server/fallback.test.ts lib/server/x402.test.ts && node --import ./lib/server/test-resolve.mjs --test lib/server/x402-gate.test.ts",
     "x402:e2e": "node scripts/x402-e2e.mjs"
   },
   "dependencies": {

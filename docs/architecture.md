@@ -44,4 +44,4 @@ A stdio MCP server using the official SDK. It reuses `apps/web/lib` for contract
 
 ## Agent-facing docs in the web app
 
-Static routes, no runtime state: `/docs` (HTML, EN/PT/ES; also covers the faucet, x402, Vercel deploy and known limitations), `/llms.txt`, `/llms-full.txt`, `/docs/agents.md` and `/.well-known/mcp.json`, all generated from `apps/web/lib/docs/`.
+Static routes, no runtime state: `/docs` (HTML, EN/PT/ES; also covers the faucet, x402, Vercel deploy and known limitations), `/llms.txt`, `/llms-full.txt`, `/docs/agents.md`, `/.well-known/mcp.json`, `/robots.txt` and `/sitemap.xml` (the last two from `app/robots.ts` and `app/sitemap.ts`); the docs routes are generated from `apps/web/lib/docs/`.
