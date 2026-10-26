@@ -32,7 +32,7 @@ Visitors hold no XLM. `/api/claim` validates the ticket, simulates first (reused
 
 ## Passkey wallet
 
-When `NEXT_PUBLIC_WALLET_WASM_HASH` is set and the relayer is configured, visitors create a `passkey-kit` smart wallet (`C…` address) with Face ID or Touch ID. Without it the app uses a device wallet: a local key in `localStorage`. A `C…` address receives SAC balances without a trustline.
+The code can create a `passkey-kit` smart wallet (`C…` address, Face ID or Touch ID) when `NEXT_PUBLIC_WALLET_WASM_HASH` is set and the relayer is configured. The factory and WebAuthn verifier are not deployed, so this is off and has not been run. The app uses a device wallet: a local key in `localStorage`. A `C…` address receives SAC balances without a trustline.
 
 ## Rotating QR
 

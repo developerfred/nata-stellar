@@ -3,10 +3,10 @@
 nata is a pay-per-visit campaign network on **Stellar Testnet**. Funds and rules live in a Soroban contract; the web app and backend only carry tickets and sponsor fees.
 
 ```
-[Visitor PWA] --passkey--> [Smart wallet C…]
+[Visitor PWA] --device key--> [Device wallet G…]   (passkey smart wallet C…: code path only, not deployed)
      | scans QR (campaign_id, nonce, expires_at, signature)
      v
-[Next.js API] --invoke claim--> [Fee sponsor / relayer] --> [Soroban: campaigns] --SAC transfer--> USDC
+[Next.js API] --invoke claim--> [Fee sponsor / relayer] --> [Soroban: campaigns] --SAC transfer--> vUSD
      ^                                                            |
      |------------------ getEvents (indexer) <--------------------|
 [Merchant dashboard] --create_campaign (wallet-signed)--> [campaigns]
@@ -18,10 +18,10 @@ nata is a pay-per-visit campaign network on **Stellar Testnet**. Funds and rules
 | Resource | Identifier | Notes |
 |---|---|---|
 | `campaigns` contract | `CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV` | Escrow + proof-of-visit. [Explorer](https://stellar.expert/explorer/testnet/contract/CBLE7UFHEZT7YCWABJN5JCH5V7O4BVUWRNCPYZ5HVTUKDGV3OIAVKSXV), [deploy tx](https://stellar.expert/explorer/testnet/tx/d6032e522576e42e8c2fdb20a6f35771d9bcb15230f277925b6ff85715404bb3) |
-| Reward token (SAC) | `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD` | SAC of the team-issued `vUSD` asset (Circle testnet USDC is the intended swap-in, untested) |
+| Reward token (SAC) | `CBR455EYJZ54MTAOGRKB6M2GCNFLENMVUOPEKXXDWVPODEZLRW7V2PRD` | SAC of the team-issued `vUSD` asset (the contract accepts any SEP-41 token per campaign; Circle USDC has not been tested) |
 | `vUSD` issuer | `GDCSTIPNL2YTPNEYZWFVMSEYOW5SEFC6FFWU2CSIVS67CHCV34YS6B26` | Classic issuer account of `vUSD`. Its secret is the server-only `FAUCET_SECRET` that mints through `/api/faucet` |
-| Fee sponsor | `GDPKJVLYS6P6FKXCJZ7RS6RXQJL3DCAQWMFGB4HWQVXZWMJMYZSOPI5I` | Server-side `SPONSOR_SECRET` account that pays fees today. OpenZeppelin Relayer Channels (`https://channels.openzeppelin.com/testnet`) is supported through `RELAYER_URL` and `RELAYER_API_KEY` |
-| Smart wallet factory / WebAuthn verifier | Not deployed | Passkey wallets need `NEXT_PUBLIC_WALLET_WASM_HASH` and a relayer. Without them visitors use a browser-held key |
+| Fee sponsor | `GDPKJVLYS6P6FKXCJZ7RS6RXQJL3DCAQWMFGB4HWQVXZWMJMYZSOPI5I` | Server-side `SPONSOR_SECRET` account that pays fees today. OpenZeppelin Relayer Channels (`https://channels.openzeppelin.com/testnet`) is supported through `RELAYER_URL` and `RELAYER_API_KEY` and was verified live on testnet (claim and `close_campaign`, see `docs/VERIFICATION.md`) |
+| Smart wallet factory / WebAuthn verifier | Not deployed | Passkey wallets need `NEXT_PUBLIC_WALLET_WASM_HASH` and a relayer. The code path exists but is off; visitors use a browser-held key |
 | Demo merchant wallet | `GCTWNUAFWMJSJSVOUACVBWVCDBDPATIF5UDQKPBCBHMBGVPJFJ24F4DY` | Funds demo campaign `0` (2 vUSD per visit, 100 vUSD budget) |
 | RPC | `https://soroban-testnet.stellar.org` | Network passphrase `Test SDF Network ; September 2015` |
 | Explorer | `https://stellar.expert/explorer/testnet` | |
@@ -31,13 +31,13 @@ nata is a pay-per-visit campaign network on **Stellar Testnet**. Funds and rules
 | Block | Role in nata |
 |---|---|
 | **Soroban smart contract** (`campaigns`) | Budget escrow, ed25519 ticket verification (`env.crypto().ed25519_verify`), single-use nonces, one claim per wallet, events for analytics |
-| **Stellar Asset Contract (SAC) / USDC** | Campaign budget and cashback. A `C…` address receives SAC balances without a trustline |
-| **Passkey smart wallet** (`passkey-kit`) | Visitors sign in with Face ID / Touch ID. No seed phrase |
-| **x402** (`@x402/stellar`) | `GET /api/x402/campaigns-premium` is paid per request with a signed SEP-41 transfer authorization; the facilitator settles. See `docs/X402.md` |
+| **Stellar Asset Contract (SAC) / vUSD** | Campaign budget and cashback (team-issued `vUSD` on testnet). A `C…` address receives SAC balances without a trustline |
+| **Passkey smart wallet** (`passkey-kit`) | Supported by the code, not deployed or enabled (factory and verifier missing). Visitors use a device wallet today |
+| **x402** (`@x402/stellar`) | `GET /api/x402/campaigns-premium` is paid per request with a signed SEP-41 transfer authorization; the facilitator settles. Verified live on testnet with vUSD. See `docs/X402.md` |
 | **Fee sponsorship** (OpenZeppelin Relayer Channels) | Visitors never hold XLM. The claim needs no visitor signature, so a plain sponsor account is a safe fallback |
 | **Soroban RPC** (`getEvents`, simulate, send) | Transaction submission and the event indexer behind merchant metrics |
 
-Track fit: **Stellar Composed** (passkey wallet + relayer + USDC/SAC + custom contract), idea areas "Stablecoins in everyday life" and "Wallets people want to use".
+Track fit: **Stellar Composed** (custom Soroban contract + vUSD SAC + OpenZeppelin relayer + x402; passkey wallet is roadmap), idea areas "Stablecoins in everyday life" and "Wallets people want to use".
 
 ## `campaigns` contract
 
@@ -88,7 +88,7 @@ The backend can submit tickets but cannot redirect funds: the reward can only be
 
 ## Roadmap
 
-Spending the cashback at other merchants (QR charge + passkey payment), multi-stop route bonuses, anchor cash-out, proof-of-humanity for sybil resistance, mainnet and audit.
+Spending the cashback at other merchants (QR charge + wallet payment), multi-stop route bonuses, anchor cash-out, proof-of-humanity for sybil resistance, mainnet and audit.
 
 ## Agent access (MCP)
 

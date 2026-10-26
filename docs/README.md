@@ -3,7 +3,7 @@
 | Document | What it covers |
 |---|---|
 | [overview.md](overview.md) | The problem, the product, who uses it, repository layout |
-| [architecture.md](architecture.md) | Contract, web app, relayer and sponsor, faucet, passkey wallet, rotating QR, MCP |
+| [architecture.md](architecture.md) | Contract, web app, relayer and sponsor, faucet, passkey wallet (code path, not deployed), rotating QR, MCP |
 | [local-setup.md](local-setup.md) | Prerequisites and running the contract, web app and MCP locally |
 | [testnet-deploy.md](testnet-deploy.md) | Building and deploying the contract, issuing the token, funding accounts |
 | [environment.md](environment.md) | Every environment variable, public versus server-only |

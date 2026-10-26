@@ -27,9 +27,10 @@ Status of every item in `docs/PLANO.md`, checked against this repository.
 | Event indexer / metrics | Read from chain by the merchant panel |
 | Seed places (P1) | 8 demo places in Lisbon and the expo, shown only when no live campaign exists |
 | Pay at counter, route campaign (P1) | Not done, roadmap |
-| Passkey wallet | Code present, depends on relayer and `NEXT_PUBLIC_WALLET_WASM_HASH`. Cut rule applies: local key is the demo path |
-| OpenZeppelin relayer | Validated, time-boxed and falls back to `SPONSOR_SECRET` (unit tested with `pnpm test` in `apps/web`). Not yet run against a live relayer |
-| Automated e2e | `scripts/e2e-testnet.sh` (9 checks: valid claim, replay, second visit, forged signature, close refund) |
+| Passkey wallet | Code path present, **not deployed or enabled**: the factory and WebAuthn verifier do not exist on testnet and `NEXT_PUBLIC_WALLET_WASM_HASH` is empty. Cut rule applied: the device wallet (key in `localStorage`) is the only wallet visitors use |
+| OpenZeppelin relayer | Verified live on testnet: 9/9 checks. Claim tx [9f181f3f…b368f3](https://stellar.expert/explorer/testnet/tx/9f181f3f8d17b936ddb2404628c72f3a958b8fcc19ffcc95649b6c8fafb368f3), `close_campaign` tx [51fec925…179514](https://stellar.expert/explorer/testnet/tx/51fec925d7e43d008077c41f0f92f59369f4d44a1528e91f1ab1a8c8c3179514). Falls back to `SPONSOR_SECRET` on error (unit tested with `pnpm test` in `apps/web`) |
+| x402 paid endpoint | Verified live on testnet: paid 0.01 vUSD, settled tx [aabd9305…bc9b0be](https://stellar.expert/explorer/testnet/tx/aabd9305ba044c092ac2b799d2e18c875b00742be6b4fd6ba6e87f447bc9b0be). See `docs/X402.md` |
+| Automated e2e | `scripts/e2e-testnet.sh` (9 checks: valid claim, replay, second visit, forged signature, close refund). Refused claims (reused QR, second visit, forged signature) are rejected at simulation, so **no transaction exists** for them; the evidence is the PASS lines and the contract tests |
 
 ## Serverless hardening
 

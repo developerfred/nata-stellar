@@ -13,7 +13,7 @@ Source of truth: `apps/web/.env.example` and `packages/mcp/.env.example`. Never 
 | `NEXT_PUBLIC_TOKEN_SYMBOL` | Symbol shown in the UI (`vUSD`) |
 | `NEXT_PUBLIC_TOKEN_ISSUER` | Issuer `G…`, for the sponsored trustline and faucet |
 | `NEXT_PUBLIC_FRIENDBOT_URL` | Friendbot for XLM funding |
-| `NEXT_PUBLIC_WALLET_WASM_HASH` | Passkey wallet WASM hash; empty means device wallets |
+| `NEXT_PUBLIC_WALLET_WASM_HASH` | Passkey wallet WASM hash; leave empty (factory not deployed), which means device wallets |
 | `NEXT_PUBLIC_EXPLORER_URL` | Explorer base URL for transaction links |
 | `NEXT_PUBLIC_SITE_URL` | Optional. Absolute origin used in `/llms.txt` and `/.well-known/mcp.json`; relative links if unset |
 
@@ -22,7 +22,7 @@ Source of truth: `apps/web/.env.example` and `packages/mcp/.env.example`. Never 
 | Variable | Description |
 |---|---|
 | `SPONSOR_SECRET` | Funded testnet account (`S…`) that pays fees when no relayer is set, and signs the fee bump of `/api/trustline` (so it is needed even with a relayer) |
-| `RELAYER_URL`, `RELAYER_API_KEY` | Optional OpenZeppelin relayer; both required together. Passkey wallet creation (`/api/wallet`) requires it |
+| `RELAYER_URL`, `RELAYER_API_KEY` | Optional OpenZeppelin relayer; both required together. Passkey wallet creation (`/api/wallet`, not deployed) requires it |
 | `RELAYER_TIMEOUT_MS` | Default 12000; then falls back to the sponsor |
 | `CONFIRM_BUDGET_MS` | Default 20000; then `/api/claim` returns a pending hash |
 | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | Shared rate limiter (also `KV_REST_API_URL`, `KV_REST_API_TOKEN`) |

@@ -25,7 +25,7 @@ Testnet only. No app code changes are needed; read the risks below before sharin
 | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (or `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | server | Required for the faucet (it answers 503 on Vercel without them); recommended for claim rate limits |
 | `FAUCET_SECRET` | server | For the faucet. **Must be the secret of the vUSD issuer** (`NEXT_PUBLIC_TOKEN_ISSUER`); any other key leaves the faucet off. Testnet-only dedicated key: it can mint unlimited vUSD |
 | `FAUCET_AMOUNT`, `FAUCET_PER_ADDRESS_DAILY`, `FAUCET_PER_IP_DAILY`, `FAUCET_DAILY_BUDGET`, `FAUCET_BUDGET_MS` | server | Optional (100, 3, 10, 20000, 8000) |
-| `RELAYER_URL`, `RELAYER_API_KEY`, `RELAYER_TIMEOUT_MS` | server | Optional; both URL and key together. Needed for passkey wallets |
+| `RELAYER_URL`, `RELAYER_API_KEY`, `RELAYER_TIMEOUT_MS` | server | Optional; both URL and key together. Optional; verified live on testnet. Passkey wallets would also need it, but they are not deployed |
 | `CONFIRM_BUDGET_MS` | server | Optional, default 20000 |
 | `X402_PAY_TO`, `X402_ASSET`, `X402_PRICE`, `X402_NETWORK`, `X402_FACILITATOR_URL`, `X402_FACILITATOR_API_KEY` | server | Optional; the paid route answers 503 until `X402_PAY_TO` is set. See [X402.md](X402.md) |
 
@@ -37,7 +37,7 @@ Testnet only. No app code changes are needed; read the risks below before sharin
 | Sponsor balance | `SPONSOR_SECRET` pays fees for every tester | Fund it with plenty of testnet XLM via friendbot before sharing the link |
 | Faucet key | `FAUCET_SECRET` is the vUSD issuer key | Dedicated testnet issuer only, never reused. Rotate by reissuing the token if it leaks |
 | Function timeout | `/api/claim` waits at most `CONFIRM_BUDGET_MS` (20 s), then returns 202 with the hash and the client polls `/api/claim/status`. The faucet waits `FAUCET_BUDGET_MS` (8 s). `maxDuration` is 60 s for claim, 30 s for the faucet | A retry cannot double pay (the contract rejects a replayed nonce) |
-| Token trustline | A `G…` device wallet needs a vUSD trustline. The app opens it through `/api/trustline`, a sponsored `changeTrust` (needs `SPONSOR_SECRET` and the issuer). A `C…` passkey wallet needs none | Verify on a fresh browser that a new wallet can get vUSD from `/faucet` and claim |
+| Token trustline | A `G…` device wallet needs a vUSD trustline. The app opens it through `/api/trustline`, a sponsored `changeTrust` (needs `SPONSOR_SECRET` and the issuer). A `C…` passkey wallet (not deployed) would need none | Verify on a fresh browser that a new wallet can get vUSD from `/faucet` and claim |
 | Keys in the browser | Visitor and merchant keys live in `localStorage` | Clearing site data loses the account. Testnet only |
 | Relayer path | `RELAYER_URL` and `RELAYER_API_KEY` are validated together, the relayer gets `RELAYER_TIMEOUT_MS` (12 s), and on error or timeout the claim falls back to `SPONSOR_SECRET`. Unit tested; not run against a live relayer | Set `SPONSOR_SECRET` as well so a relayer outage does not block claims |
 

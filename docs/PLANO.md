@@ -1,5 +1,7 @@
 # nata: plano de construção (HackMeridian)
 
+> **Nota (26/out):** este é o plano original, mantido como foi escrito. Onde ele cita carteira passkey/Face ID, USDC ou relayer, o estado entregue é: carteira do dispositivo (factory de passkey não implantada), token `vUSD` na testnet, relayer e x402 verificados na testnet. Veja `VERIFICATION.md`.
+
 > Entrega: **segunda, 26/out, 12:00 (Lisboa)**. Hoje: domingo, 25/out, ~18:15.
 > Tracks: **Genesis + Stellar Composed**. Rede: **Stellar Testnet**.
 
