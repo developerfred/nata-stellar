@@ -31,7 +31,7 @@ NEXT_PUBLIC_TOKEN_ISSUER=${FACTS.tokenIssuer}   # vUSD issuer (G...)
 NEXT_PUBLIC_FRIENDBOT_URL=https://friendbot.stellar.org
 NEXT_PUBLIC_EXPLORER_URL=https://stellar.expert/explorer/testnet
 NEXT_PUBLIC_WALLET_WASM_HASH=   # empty = device wallets (passkey factory not deployed, leave empty)
-NEXT_PUBLIC_SITE_URL=   # optional, e.g. https://<host>: absolute links in /llms.txt
+NEXT_PUBLIC_SITE_URL=   # optional origin for metadata, sitemap and llms.txt; defaults to https://nata-stellar.vercel.app
 
 # Server only (never NEXT_PUBLIC_)
 SPONSOR_SECRET=   # required: funded testnet account; pays claim fees (relayer fallback) and the trustline fee bump

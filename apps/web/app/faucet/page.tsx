@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import { FaucetForm } from "@/components/FaucetForm";
 import { T } from "@/lib/i18n";
+
+export const metadata: Metadata = {
+  title: "Get test vUSD",
+  description: "Free test vUSD for Stellar Testnet so you can try nata: add the trustline, request tokens and claim a visit reward. Test tokens have no monetary value.",
+  alternates: { canonical: "/faucet" },
+};
 
 export default function FaucetPage() {
   return (

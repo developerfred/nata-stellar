@@ -15,7 +15,7 @@ Source of truth: `apps/web/.env.example` and `packages/mcp/.env.example`. Never 
 | `NEXT_PUBLIC_FRIENDBOT_URL` | Friendbot for XLM funding |
 | `NEXT_PUBLIC_WALLET_WASM_HASH` | Passkey wallet WASM hash; leave empty (factory not deployed), which means device wallets |
 | `NEXT_PUBLIC_EXPLORER_URL` | Explorer base URL for transaction links |
-| `NEXT_PUBLIC_SITE_URL` | Optional. Absolute origin used in `/llms.txt`, `/.well-known/mcp.json`, `/robots.txt` and `/sitemap.xml` (falls back to the Vercel URL); links are relative in `/llms.txt` if unset |
+| `NEXT_PUBLIC_SITE_URL` | Optional. Absolute origin used in `/llms.txt`, `/.well-known/mcp.json`, `/robots.txt` and `/sitemap.xml` (defaults to `https://nata-stellar.vercel.app`) |
 
 ## Web app, server only (never prefix with `NEXT_PUBLIC_`)
 

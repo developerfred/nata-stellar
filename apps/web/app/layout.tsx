@@ -3,16 +3,38 @@ import "./globals.css";
 import { I18nProvider, T } from "@/lib/i18n";
 import { Onboarding } from "@/components/Onboarding";
 import { SiteHeader } from "@/components/SiteHeader";
+import { SITE_DESCRIPTION, TAGLINE } from "@/lib/brand";
+import { jsonLdString, siteJsonLd } from "@/lib/jsonld";
+import { siteUrl } from "@/lib/site";
+
+const site = siteUrl();
 
 export const metadata: Metadata = {
-  title: "nata: get paid to visit",
-  description: "Pay-per-visit campaigns on Stellar. Places only pay when you really show up.",
-  manifest: "/manifest.webmanifest",
+  metadataBase: new URL(site),
+  title: { default: `nata: ${TAGLINE.replace(/\.$/, "").toLowerCase()}`, template: "%s | nata" },
+  description: SITE_DESCRIPTION,
+  applicationName: "nata",
+  keywords: ["nata", "Stellar", "Soroban", "pay-per-visit", "proof of visit", "cashback", "x402", "MCP", "Lisbon", "azulejo"],
+  alternates: { canonical: "./" },
+  openGraph: {
+    type: "website",
+    siteName: "nata",
+    title: `nata: ${TAGLINE}`,
+    description: SITE_DESCRIPTION,
+    url: "./",
+    locale: "en_US",
+    alternateLocale: ["pt_PT", "es_ES"],
+  },
+  twitter: { card: "summary_large_image", title: `nata: ${TAGLINE}`, description: SITE_DESCRIPTION },
+  robots: { index: true, follow: true },
   appleWebApp: { capable: true, title: "nata" },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#1d4ba0",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#1d4ba0" },
+    { media: "(prefers-color-scheme: dark)", color: "#0d1424" },
+  ],
   width: "device-width",
   initialScale: 1,
 };
@@ -21,6 +43,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className="h-full antialiased">
       <body className="min-h-full flex flex-col">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(siteJsonLd(site)) }} />
         <I18nProvider>
           <SiteHeader />
           <Onboarding />
